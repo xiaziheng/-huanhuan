@@ -1,0 +1,342 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>设置网格布局</title>
+	<link href="./libs/bootstrap-3.3.7.css" rel="stylesheet" />
+	<link href="./libs/font-awesome.css" rel="stylesheet" type="text/css" />
+	<link href="./libs/editor.css" rel="stylesheet" type="text/css" />
+	<script src="./libs/editor.js"></script>
+	<script src="./libs/jquery-1.12.4.js"></script>
+	<script src="./libs/bootstrap-3.3.7.js"></script>
+</head>
+<body>
+<div class="container-full">
+	<div class="panel">
+		<div class="panel-heading panel-primary">
+			<h4>设置网格布局</h4>
+		</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-sm-1 label-paddding">横跨格：</label>
+						<div class="col-sm-3">
+							<div class="input-group">
+								<input id="grid_num" type="text" class="form-control text-right" placeholder="" value="" />
+								<span class="input-group-addon">格/12格</span>
+							</div>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">背景颜色：</label>
+						<div class="col-sm-1">
+							<div class="input-group">
+								<input value="fff"" type="text" class="form-control jscolor" placeholder=""/>
+							</div>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">固定高度：</label>
+						<div class="col-sm-2">
+							<div class="input-group">
+								<input id="heightset" type="text" class="form-control" placeholder="" value="" />
+								<span class="input-group-addon">px</span>
+							</div>
+						</div>
+						<label class="control-label col-sm-2 label-paddding">
+							<input id="Checkbox1" type="checkbox"> 自增行脚本
+						</label>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-1 label-paddding">上外边距：</label>
+						<div class="col-sm-2">
+							<div class="input-group">
+								<input id="margin_topset" type="text" class="form-control text-right" placeholder="" value="" />
+								<span class="input-group-addon">px</span>
+							</div>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">左外边距：</label>
+						<div class="col-sm-2">
+							<div class="input-group">
+								<input id="margin_leftset" type="text" class="form-control text-right" placeholder="" value="" />
+								<span class="input-group-addon">px</span>
+							</div>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">上外距：</label>
+						<div class="col-sm-2">
+							<div class="input-group">
+								<input id="padding_topset" type="text" class="form-control text-right" placeholder="" value="" />
+								<span class="input-group-addon">px</span>
+							</div>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">左外距：</label>
+						<div class="col-sm-2">
+							<div class="input-group">
+								<input id="padding_leftset" type="text" class="form-control text-right" placeholder="" value="" />
+								<span class="input-group-addon">px</span>
+							</div>
+						</div>
+					</div>
+					<div class="form-group"style="text-align: left">
+						<label class="control-label col-sm-1 label-paddding">下外边距：</label>
+						<div class="col-sm-2">
+							<div class="input-group">
+								<input id="margin_bottomset" type="text" class="form-control text-right" placeholder="" value="" />
+								<span class="input-group-addon">px</span>
+							</div>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">右外边距：</label>
+						<div class="col-sm-2">
+							<div class="input-group">
+								<input id="margin_rightset" type="text" class="form-control text-right" placeholder="" value="" />
+								<span class="input-group-addon">px</span>
+							</div>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">下外距：</label>
+						<div class="col-sm-2">
+							<div class="input-group">
+								<input id="padding_bottomset" type="text" class="form-control text-right" placeholder="" value="" />
+								<span class="input-group-addon">px</span>
+							</div>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">右外距：</label>
+						<div class="col-sm-2">
+							<div class="input-group">
+								<input id="padding_rightset" type="text" class="form-control text-right" placeholder="" value="" />
+								<span class="input-group-addon">px</span>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-1 label-paddding col-sm-offset-1">上边框粗细：</label>
+						<div class="col-sm-2">
+							<div class="input-group">
+								<input id="tborder_px" type="text" class="form-control text-right width" placeholder="" value="" />
+								<span class="input-group-addon">px</span>
+							</div>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">边框样式：</label>
+						<div class="col-sm-2">
+							<select id="tborder_style" class="form-control bstyle" value="">
+								<option value="solid">实线</option>
+								<option value="dashed">虚线</option>
+								<option value="dotted">点实线</option>
+								<option value="double">双线</option>
+							</select>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">边框颜色：</label>
+						<div class="col-sm-1">
+							<div class="input-group">
+								<input value="fff"" type="text" class="form-control jscolor tborder bordercolor" placeholder=""/>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<input type="checkbox" class="checkbox col-sm-1 checkborder" onclick="checkborder(this)">
+						<label class="control-label col-sm-1 label-paddding">下边框粗细：</label>
+						<div class="col-sm-2">
+							<div class="input-group">
+								<input id="bborder_px" type="text" class="form-control text-right width" placeholder="" value="" />
+								<span class="input-group-addon">px</span>
+							</div>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">边框样式：</label>
+						<div class="col-sm-2">
+							<select id="bborder_style" class="form-control bstyle">
+								<option value="solid">实线</option>
+								<option value="dashed">虚线</option>
+								<option value="dotted">点实线</option>
+								<option value="double">双线</option>
+							</select>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">边框颜色：</label>
+						<div class="col-sm-1">
+							<div class="input-group">
+								<input value="fff"" type="text" class="form-control jscolor bborder bordercolor" placeholder=""/>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<input type="checkbox" class="checkbox col-sm-1 checkborder" onclick="checkborder(this)">
+						<label class="control-label col-sm-1 label-paddding">左边框粗细：</label>
+						<div class="col-sm-2">
+							<div class="input-group">
+								<input id="lborder_px" type="text" class="form-control text-right width" placeholder="" value="" />
+								<span class="input-group-addon">px</span>
+							</div>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">边框样式：</label>
+						<div class="col-sm-2">
+							<select id="lborder_style" class="form-control bstyle">
+								<option value="solid">实线</option>
+								<option value="dashed">虚线</option>
+								<option value="dotted">点实线</option>
+								<option value="double">双线</option>
+							</select>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">边框颜色：</label>
+						<div class="col-sm-1">
+							<div class="input-group">
+								<input value="fff"" type="text" class="form-control jscolor lborder bordercolor" placeholder=""/>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<input type="checkbox" class="checkbox col-sm-1 checkborder" onclick="checkborder(this)">
+						<label class="control-label col-sm-1 label-paddding">右边框粗细：</label>
+						<div class="col-sm-2">
+							<div class="input-group">
+								<input id="rborder_px" type="text" class="form-control text-right width" placeholder="" value="" />
+								<span class="input-group-addon">px</span>
+							</div>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">边框样式：</label>
+						<div class="col-sm-2">
+							<select id="rborder_style" class="form-control bstyle">
+								<option value="solid">实线</option>
+								<option value="dashed">虚线</option>
+								<option value="dotted">点实线</option>
+								<option value="double">双线</option>
+							</select>
+						</div>
+						<label class="control-label col-sm-1 label-paddding">边框颜色：</label>
+						<div class="col-sm-1">
+							<div class="input-group">
+								<input value="fff"" type="text" class="form-control jscolor rborder bordercolor" placeholder=""/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-footer text-center" style="border:1px; border-style:dashed;border-color:red;">
+			<input id="tempGridsaveLayout" type="button" value="确定" class="btn btn-primary" onclick="change_setting()" />
+			<input id="Button2" type="button" value="关闭" class="btn btn-default" onclick="Close()"/>
+		</div>
+		<div style="display: none;">
+			<div id="selfCopyGridDIV" class="col-sm-1" style="display: inline-block;">
+				<i class="fa fa-plus" onclick="jingyu_cloneNode(this)" style="cursor:pointer; color: blue;"></i>
+				<i class="fa fa-minus" onclick="jingyu_deleNode(this)" style="cursor:pointer; color: blue;"></i>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+
+$(document).ready(function ()
+{
+
+});
+
+function checkborder(event){
+	var check_paren = $(event).parent();
+	if($(event).is(':checked')){
+		check_paren.find('.width').val($('#tborder_px').val());
+		check_paren.find('.bstyle').val($('#tborder_style').val());
+		check_paren.find('.bordercolor').val($('.tborder').val());
+		check_paren.find('.bordercolor').css("background-color","#"+$('.tborder').val()+"")
+	}else{
+		console.log(2)
+		check_paren.find('.width').val('');
+		check_paren.find('.bstyle').val('solid');
+		check_paren.find('.bordercolor').val('FFFFFF');
+		check_paren.find('.bordercolor').css("background-color","#FFFFFF")
+	}
+}
+
+function change_setting()
+{
+
+	var tempGrids = parent.getGrids();
+	var col_span = $("#grid_num").val();
+	var background = "#"+$(".jscolor").val()+"";
+	var border_Style = $("#border_style").val();
+	var copy_dive = $('#Checkbox1').is(':checked');
+	if(copy_dive){
+		var copyDive = $('#selfCopyGridDIV').clone();
+		copyDive.removeAttr('id');
+		tempGrids.find('.c-content:first').append(copyDive);
+	}
+	if(height >= 0)
+	{
+		tempGrids.css("height", height);
+	}
+	var margin_top = parseInt($("#margin_topset").val());
+	if(margin_top >= 0)
+	{
+		tempGrids.css("margin-top", margin_top);
+	}
+	var margin_bottom = parseInt($("#margin_bottomset").val());
+	if(margin_bottom >= 0)
+	{
+		console.log(margin_bottom)
+		tempGrids.css("margin-bottom", margin_bottom);
+	}
+	var margin_left = parseInt($("#margin_leftset").val());
+	if(margin_left >= 0)
+	{
+		tempGrids.css("margin-left", margin_left);
+	}
+	var margin_right = parseInt($("#margin_rightset").val());
+	if(margin_right >= 0)
+	{
+		tempGrids.css("margin-right", margin_right);
+	}
+	var padding_top = parseInt($("#padding_topset").val());
+	if(padding_top >= 0)
+	{
+		tempGrids.css("padding-top", padding_top);
+	}
+	var padding_bottom = parseInt($("#padding_bottomset").val());
+	if(padding_bottom >= 0)
+	{
+		console.log(padding_bottom);
+		tempGrids.css("padding-bottom", padding_bottom);
+	}
+	var padding_left = parseInt($("#padding_leftset").val());
+	if(padding_left >= 0)
+	{
+		tempGrids.css("padding-left", padding_left);
+	}
+	var padding_right = parseInt($("#padding_rightset").val());
+	if(padding_right >= 0)
+	{
+		tempGrids.css("padding-right", padding_right);
+	}
+	var height = parseInt($("#heightset").val());
+	if(height >= 0)
+	{
+		tempGrids.css("height", height);
+	}
+	var col_span = parseInt($("#grid_num").val());
+	if(col_span >= 0)
+	{
+		tempGrids.addClass("col-sm-"+col_span);
+	}
+	var tborder_Px = parseInt($("#tborder_px").val());
+	if(tborder_Px >= 0)
+	{
+		tempGrids.css({"border-top":tborder_Px,"border-top-style":$("#tborder_style").val(),"border-top-color":"#"+$('.tborder').val()+""});
+	}
+	var bborder_Px = parseInt($("#bborder_px").val());
+	if(bborder_Px >= 0)
+	{
+		tempGrids.css({"border-bottom":bborder_Px,"border-bottom-style":$("#bborder_style").val(),"border-bottom-color":"#"+$('.bborder').val()+""});
+	}
+	var rborder_Px = parseInt($("#rborder_px").val());
+	if(rborder_Px >= 0)
+	{
+		tempGrids.css({"border-right":rborder_Px,"border-right-style":$("#rborder_style").val(),"border-right-color":"#"+$('.rborder').val()+""});
+	}
+	var lborder_Px = parseInt($("#lborder_px").val());
+	if(lborder_Px >= 0)
+	{
+		tempGrids.css({"border-left":lborder_Px,"border-left-style":$("#lborder_style").val(),"border-left-color":"#"+$('.lborder').val()+""});
+	}
+
+	tempGrids.css("background-color",background);
+	//回显
+	parent.modalWin.modal("hide");
+}
+</script>
+<script src="./libs/jscolor.js"></script>
+</body>
+</html>
+

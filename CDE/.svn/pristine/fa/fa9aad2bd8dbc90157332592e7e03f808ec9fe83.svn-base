@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>质量控制</title>
+    <link href="./libs/bootstrap-3.3.7.css" rel="stylesheet">
+    <link href="./libs/font-awesome.css" rel="stylesheet">
+    <link href="./libs/editor.css" rel="stylesheet">
+    <script src="./libs/jquery-1.12.4.js"></script>
+    <script src="./libs/bootstrap-3.3.7.js"></script>
+	<style>
+		.form-group
+		{
+			margin-bottom:0px;
+			margin-top:0px;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+    <div class="form-group">
+        <label class="col-xs-3" style="margin:0px; padding:0px;"><input type="radio" name="bt" checked="checked" value="-1" />无</label>
+        <label class="col-xs-5" style="margin:0px; padding:0px;"><input type="radio" name="bt" value="0" />必填</label>
+        <label class="col-xs-4" style="margin:0px; padding:0px;"><input type="radio" name="bt" value="1" />取消</label>
+    </div>
+	<div class="clearfix"></div>
+    <div class="form-group">
+        <label class="col-xs-3" style="margin:0px; padding:0px;"><input type="radio" name="phoneNum" checked="checked" value="-1" />无</label>
+        <label class="col-xs-5" style="margin:0px; padding:0px;"><input type="radio" name="phoneNum" value=="^1\d{10}$" />手机号</label>
+        <label class="col-xs-4" style="margin:0px; padding:0px;"><input type="radio" name="phoneNum" value="1" />取消</label>
+        <div class="col-xs-12" style="margin:0px; padding:0px;"><input id="phoneTip" class="form-control" type="text" placeholder="输入错误提示语" /></div>
+    </div>
+	<div class="clearfix"></div>
+    <div class="form-group">
+        <label class="col-xs-3" style="margin:0px; padding:0px;"><input type="radio" name="cardNum" checked="checked" value="-1" />无</label>
+        <label class="col-xs-5" style="margin:0px; padding:0px;"><input type="radio" name="cardNum" value="^\d{17}(\d|x)$" />身份证号</label>
+        <label class="col-xs-4" style="margin:0px; padding:0px;"><input type="radio" name="cardNum" value="1" />取消</label>
+        <div class="col-xs-12" style="margin:0px; padding:0px;"><input id="cardTip" class="form-control" type="text" placeholder="输入错误提示语" /></div>
+    </div>
+	<div class="clearfix"></div>
+    <div class="form-group">
+        <label class="col-xs-3" style="margin:0px; padding:0px;"><input type="radio" name="czyj" checked="checked" value="-1" />无</label>
+        <label class="col-xs-5" style="margin:0px; padding:0px;"><input type="radio" name="czyj" value="0" />超值警示</label>
+        <label class="col-xs-4" style="margin:0px; padding:0px;"><input type="radio" name="czyj" value="1" />取消</label>
+    </div>
+	<div class="clearfix"></div>
+    <div class="form-group">
+        <label class="col-xs-3" style="margin:0px; padding:0px;"><input type="radio" name="bdc" checked="checked" value="-1" />无</label>
+        <label class="col-xs-5" style="margin:0px; padding:0px;"><input type="radio" name="bdc" value="0" />不导出</label>
+        <label class="col-xs-4" style="margin:0px; padding:0px;"><input type="radio" name="bdc" value="1" />取消</label>
+		<div class="col-xs-12" style="margin:0px; padding:0px;"><p class="text-danger">- 不导出隐私数据</p></div>
+    </div>
+	<div class="clearfix"></div>
+    <div class="form-group">
+        <label class="col-xs-3" style="margin:0px; padding:0px;"><input type="radio" name="zdzf" checked="checked" value="-1" />无</label>
+        <label class="col-xs-5" style="margin:0px; padding:0px;"><input type="radio" name="zdzf" value="0">最多字符</label>
+        <label class="col-xs-4" style="margin:0px; padding:0px;"><input type="radio" name="zdzf" value="1">取消</label>
+        <div class="col-xs-12" style="margin:0px; padding:0px;"><input type="text" id="zdzfValue" class="form-control" placeholder="每次输入的最多字符数"></div>
+    </div>
+	<div class="clearfix"></div>
+    <div class="form-group">
+        <label class="col-xs-3" style="margin:0px; padding:0px;"><input type="radio" name="qcan" checked="checked" value="-1">无</label>
+        <label class="col-xs-5" style="margin:0px; padding:0px;"><input type="radio" name="qcan" value="0">清除痕迹</label>
+        <label class="col-xs-4" style="margin:0px; padding:0px;"><input type="radio" name="qcan" value="1">取消</label>
+		<div class="col-xs-12" style="margin:0px; padding:0px;"><p class="text-danger">- 取消按钮点选痕迹</p></div>
+    </div>
+	<div class="clearfix"></div>
+    <div class="form-group col-sm-2">
+        <button onclick="btnSimple();" type="button" class="btn btn-primary">确定</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function()
+{
+
+ });
+
+function btnSimple()
+{
+	window.element = parent.getGrids().find('.c-element');
+    if(element.length == 0)
+    {
+        alert('请先绑定控件');
+        return false;
+    }
+    setAttr("bt", 'required', 'true');
+
+    setAttr("phoneNum", 'pattern', "^1\d{10}$");
+    setAttr("phoneNum", 'error-prompt', $("#phoneTip").val());
+
+    setAttr("cardNum", 'pattern', "^\d{17}(\d|x)$");
+    setAttr("cardNum", 'error-prompt', $("#cardTip").val());
+
+	//TODO超值预警 暂时不清楚怎么做
+    //isChecked("czyj", 'value-warning', '', false);
+
+    setAttr("bdc", 'data-export-permission', false);
+
+    setAttr("zdzf", 'maxlength', $('#zdzfValue').val());
+
+    var value = $('input:radio[name="qcan"]:checked').val();
+    if (value != "-1")
+	{
+		if (value == "0")
+		{
+			console.log(parent.getGrid().find(".c-sorter-eraser").length);
+			if (parent.getGrid().find(".c-sorter-eraser").length == 0)
+			{
+				var clearBtn = $('<a href="#" class="c-sorter-eraser" title="清除选择"><i class="fa fa-eraser"></i></a>');
+				parent.getGrid().find(".c-toolbar").prepend(clearBtn);
+				parent.getGrid().find(".c-sorter-eraser").attr('onclick', "$(this).parents('.c-grid:first').find('.c-element').attr('checked', false);");
+			}
+    	}
+    	else
+		{
+			parent.getGrid().find(".c-sorter-eraser").remove();
+    	}
+    }
+}
+
+function setAttr(name, attrName, attrValue)
+{
+	var value = $('input:radio[name="' + name + '"]:checked').val();
+	if (value != "-1")
+	{
+		if (value == "1")
+		{
+			element.removeAttr(attrName);
+		}
+		else
+		{
+			element.attr(attrName, attrValue);
+		}
+	}
+}
+</script>
+</body>
+</html>

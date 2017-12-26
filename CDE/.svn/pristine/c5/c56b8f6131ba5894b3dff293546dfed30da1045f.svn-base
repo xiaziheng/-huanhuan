@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>引用项目数据集（带格式的通用模板/CRF模板）</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<!--, user-scalable=no  可以禁用其缩放-->
+	<link href="./libs/bootstrap-3.3.7.css" rel="stylesheet" />
+	<link href="libs/font-awesome.css" rel="stylesheet" type="text/css" />
+	<link href="./libs/editor.css" rel="stylesheet" type="text/css" />
+	<script src="./libs/jquery-1.12.4.js"></script>
+	<script src="./libs/bootstrap-3.3.7.js"></script>
+	<script src="./libs/bootstrap-paginator.js"></script>
+</head>
+<body>
+<div class="container-full">
+	<div class="col-sm-6">
+		<div class="row" id="xuanMb">
+			<div class="form-inline">
+				<select class="form-control">
+					<option>全部</option>
+					<option>通用型</option>
+					<option>分类一</option>
+				</select>
+				<div class="input-group">
+					<input id="keyword" onkeyup=" if(event.keyCode==13) {search(1);}" type="text" class="form-control"/>
+					<span class="input-group-addon btn btn-default" onclick="search(1);"><li class="fa fa-search"></li></span>
+				</div>
+			</div>
+		</div>
+		<div id="Mb" class="row">
+			<table class="table table-bordered table-hover" >
+				<thead>
+				<tr class="active">
+					<th class="text-center"></th>
+					<th class='text-center'>模板名称</th>
+				</tr>
+				</thead>
+				<tbody id="tBody">
+				<tr id="viewNode">
+					<td class="text-center"><button onclick="btnOK();"><i class="fa fa-caret-square-o-left"></i></button></td>
+					<td><label class="radio-inline"><input class="n-radio" name="tid" type="radio"/></label></td>
+				</tr>
+				</tbody>
+			</table>
+			<ul id="pager"></ul>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+
+$(document).ready(function ()
+{
+	$('#viewNode').hide();
+	search(1);
+});
+
+
+function search(currentPage)
+{
+	$.post("http://api.nverhe.com/CRFSvr/allTemplates", {keyword: $('#keyword').val(), p:currentPage}, function (res)
+	{
+		if (res.code == 0)
+		{
+			$('#viewNode').nextAll().remove();
+			for(var i=0; i<res.data.length; i++)
+			{
+				var obj = res.data[i];
+				var newNode = $('#viewNode').clone();
+				newNode.find('.n-radio').val(obj.ID);
+				newNode.find('.n-radio').after(obj.ID+':'+obj.name);
+				newNode.show();
+				$('#tBody').append(newNode);
+			}
+
+			$('#pager').bootstrapPaginator(
+			{
+				bootstrapMajorVersion:3,
+				currentPage: currentPage,
+				totalPages: Math.ceil(res.countPage),
+				onPageClicked: function(e, originalEvent, type, page) {search(page);}
+			});
+		}
+	}, "json");
+}
+	function btnOK()
+	{
+//		$.post("http://api.nverhe.com/CRFSvr/model", {id: $("input[name='tid']:checked").val()},
+//				function (res)
+//				{
+//					console.log(res);
+//					if (res.code == 0)
+//					{
+//						var innerNode = $(res.data);
+//						innerNode.removeAttr('id');
+//						innerNode.removeClass('editorBody');
+//						parent.getGrid().find('.c-content').append(innerNode);
+//						parent.modalWin.modal("hide");
+//					}
+		//				}, "json").error(function(){console.log(res.responseText)});
+
+
+		$.post('http://api.nverhe.com/CRFSvr/htmlStr', { id: $("input[name='tid']:checked").val() },
+            function (res) {
+            	if (res.code == 0) {
+            		if (res.data.trim() == '') {
+            			return false;
+            		}
+            		var innerNode = $(res.data);
+            		innerNode.removeAttr('id');
+            		innerNode.removeClass('editorBody');
+            		parent.getGrids().find('.c-content').append(innerNode);
+//            		$('#editorBody').html(res.data);
+            	}
+            }, 'json');
+	}
+</script>
+</body>
+</html>

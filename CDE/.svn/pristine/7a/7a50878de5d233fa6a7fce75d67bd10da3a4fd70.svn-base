@@ -1,0 +1,331 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>编辑器2.0</title>
+	<link href="./libs/bootstrap-3.3.7.css" rel="stylesheet">
+	<link href="./libs/font-awesome.css" rel="stylesheet">
+	<link href="./libs/editor.css" rel="stylesheet">
+	<script src="./libs/jquery-1.12.4.js"></script>
+	<script src="./libs/bootstrap-3.3.7.js"></script>
+	<script src="./libs/bootstrap-paginator.js"></script>
+	<script src="./libs/editor.js"></script>
+	<script type="text/javascript">
+		var username = zq_getCookie("e_username");
+		if ($.isEmptyObject(username)) {
+			location = "login.html";
+		}
+	</script>
+</head>
+<body>
+<div class="container-full">
+	<div class="panel-heading bg-primary" style="height:90px;">
+		<h3 class="col-sm-10"><li class="fa fa-home">&nbsp;</li>模板编辑器</h3>
+		<div class="col-sm-2 h3 text-right">
+			<a href="javascript:;" class="dropdown-toggle label h3" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+				<i class="fa fa-user-md"></i>
+			</a>
+			<ul class="dropdown-menu dropdown-menu-default" style="margin-left:25px;">
+				<li><a href="javascript:" onclick="signOut()"><span class="fa fa-exchange text-success"></span>&nbsp;切换账号</a></li>
+				<li><a href=""><span class="fa fa-asterisk text-success"></span>&nbsp;修改密码</a></li>
+				<li><a href="javascript:" onclick="signOut()"><span class="fa fa-sign-out text-danger"></span>&nbsp;退出</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+<div class="container" style="margin-top: 8px;">
+	<div class="row">
+		<div class="col-sm-8 form-inline">
+			<select id="sLanguage" class="form-control" title="">
+				<option>通用型</option>
+				<option>项目名称</option>
+				<option>模板名称</option>
+			</select>
+			<input type="text" id="keyword" class="form-control" placeholder="请输入项目、模板或其他关键字" style="width:221px;" />
+			<button onclick="search(1);" class="btn btn-default" title="检索"><li class="fa fa-search"></li></button>
+			<button onclick="newTemplate();" class="btn btn-default" title="新建"><li class="fa fa-plus"></li></button>
+			<button id="btnDelete" class="btn btn-default" onclick="dele()" title="删除"><li class="fa fa-minus"></li></button>
+			<button id="btnExport" class="btn btn-default" title="导出"><li class="fa fa-download"></li></button>
+		</div>
+		
+	</div>
+	<table class="table table-bordered table-hover table-condensed" style="margin-bottom: 5px;">
+		<thead>
+		<tr class="active">
+			<th style="width:25px;"><input onclick="checkALL(this);" type="checkbox"></th>
+			<th style="width:70px;">模板编码</th>
+			<th>模板名称</th>
+            <th>医院名称</th>
+			<th>项目名称</th>
+			<th style="width:70px;">编辑者</th>
+			<th style="width:150px;">编辑时间</th>
+			<th style="width:130px;">操作</th>
+		</tr>
+		</thead>
+		<tbody id="templatesTable" class="templateNode">
+		<tr id="viewNode" class="c-tr">
+            <td>
+                <input class="n-checkbox" type='checkbox' onclick="add_class(this)"/>
+            </td>
+            <td class="n-id"></td>
+            <td class="n-name"></td>
+            <td class="n-hid"></td>
+            <td class="n-pid"></td>
+            <td></td>
+            <td class="n-datetime"></td>
+            <td>
+				<button onclick="toEditNode(this)" title="修改" class="btn btn-default btn-xs"><li class="fa fa-pencil text-success"></li></button>
+				<a class="n-btn-preview btn btn-default btn-xs" title="预览-编辑" href="#"><li class="fa fa-eye text-primary"></li></a>
+				<a class="n-btn-preview-lable btn btn-default btn-xs" title="预览-查看" href="#"><li class="fa fa-eye-slash text-success"></li></a>
+                <a class="n-btn-edit btn btn-default btn-xs" title="编辑" href="#"><li class="fa fa-edit text-primary"></li></a>
+            </td>
+		</tr>
+        <tr id="editNode" class="c-tr">
+            <td>
+                <input class="n-checkbox" type='checkbox' onclick="add_class(this)"/>
+            </td>
+            <td class="n-id"></td>
+            <td><input class="form-control n-name"></td>
+            <td class="n-hname" onchange="loadProject(this);">
+				<select class="c-hid form-control">
+					<option value="0">无</option>
+				</select>
+			</td>
+            <td class="n-pname">
+				<select class="c-pid form-control">
+					<option value="0">无</option>
+				</select>
+			</td>
+            <td></td>
+            <td class="n-datetime"></td>
+            <td>
+                <button class="btn btn-default btn-xs" title="保存" onclick="saveTemplate(this);"><li class="fa fa-save text-danger"></li></button>
+                <button class="btn btn-default btn-xs c-refresh" title="刷新" onclick="toEditNode(this);"><li class="fa fa-refresh text-primary"></li></button>
+                <button class="btn btn-default btn-xs c-reply" title="取消" onclick="cancelSave(this);"><li class="fa fa-reply text-danger"></li></button>
+            </td>
+        </tr>
+		</tbody>
+	</table>
+	<ul id="pager" style="margin:0px;"></ul>
+</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div class="text-right col-sm-12" >
+	<p>Copyright &copy; 嘉和美康信息技术有限公司</p>
+</div>
+<script type="text/javascript">
+$(document).ready(function ()
+{
+    $("#viewNode").hide();
+    $("#editNode").hide();
+
+	$.post("http://api.nverhe.com/HospitalSvr/search",
+			function(res){
+				for(var i=0; i<res.data.length; i++){
+					var obj = res.data[i];
+					var option = "<option value='"+obj.id+"'>"+obj.name+"</option>"
+					$('#editNode').find('.c-hid').append(option)
+				}
+			},'json');
+
+	search(1);
+});
+
+function loadProject(event)
+{
+	var js_hid = $(event).find('option:selected').val();
+	if(js_hid == undefined)
+	{
+		return false;
+	}
+
+	$.post("http://api.nverhe.com/ProjectSvr/search", {hid: js_hid},
+			function(res){
+				var selectNode = $(event).parents('.c-tr').find('.c-pid');
+				selectNode.find('option:first').siblings().remove();
+				for(var i=0; i<res.data.length; i++){
+					var obj = res.data[i];
+					var option = "<option value='"+obj.id+"'>"+obj.name+"</option>"
+					selectNode.append(option)
+				}
+				var row_id = $(event).parents('.c-tr').attr('data-pid');
+				if(row_id == undefined)return false;
+				selectNode.val(row_id);
+			},'json');
+}
+
+function saveTemplate(event)
+{	
+    var tr = $(event).parents('.c-tr');
+    $.post('http://api.nverhe.com/CRFSvr/insertOrUpdate',
+            {
+                id: tr.attr('id'),
+				name: tr.find('.n-name').val(),
+                pid:tr.find('.c-pid').find('option:selected').val(),
+				hid:tr.find('.c-hid').find('option:selected').val()
+              },
+
+            function(res)
+            {	
+                if(res.code == 0)
+                {	
+                	$(event).parents('.c-tr').attr('id', res.data.id);
+                	$(event).parents('.c-tr').find(".n-id").text(res.data.id);
+                	cancelSave(event);
+                }
+                else
+                {
+                    alert(res.data);
+                }
+            }, 'json').error(function(res){
+				console.log(res.responseText);
+			});
+}
+
+function newTemplate()
+{
+    var newNode = $("#editNode").clone();
+    newNode.attr('id', 0);
+    newNode.find(".c-refresh").remove();
+    newNode.find(".c-reply").remove();
+    newNode.show();
+    $("#editNode").after(newNode);
+}
+
+function checkALL(event)
+{
+	alert(1)
+	var flagBox = $(".flag[type=checkbox]");
+	if($(event).is(':checked')){
+		flagBox.addClass("dele");
+		flagBox.prop("checked",true);	
+	}else{
+		flagBox.removeClass("dele");
+		flagBox.prop("checked",false);	
+	} 
+}
+
+function add_class(event) {
+	
+	if($(event).is(':checked')){
+		$(event).addClass("dele")
+	}else{
+		$(event).removeClass("dele")
+	}	
+}
+
+function dele(){
+	if($('.dele').length > 0){
+		var r= confirm("确认要删除吗？")
+		if(r){
+			var deleNode = $(".dele").parent().parent();
+			var arr=[];
+			deleNode.each(function(){
+				arr.push($(this).attr('id'))
+			})
+			$.post("http://api.nverhe.com/CRFSvr/delete", { id: arr },
+				function(res){
+					if(res.code == 0){
+						deleNode.remove();
+					}else{
+						alert("删除不成功")
+					}
+			},"json")
+		}
+	}
+}
+
+function toEditNode(event){
+	var tr = $(event).parents('.c-tr');
+	var mod_id = tr.find(".n-id").text();
+	$.post("http://api.nverhe.com/CRFSvr/model",{id: mod_id},
+		function (res)
+		{
+			var edit_mod = $('#editNode').clone();
+			edit_mod.find('.n-id').text(res.data.id);
+			edit_mod.find('.n-name').val(res.data.name);
+			edit_mod.find('.n-datetime').text(res.data.VERSION_DATE);
+			edit_mod.attr('id',res.data.id);
+			edit_mod.find('.c-hid').val(res.data.hid);
+			edit_mod.attr('data-pid', res.data.pid);
+			edit_mod.find('.c-hid').change();
+			edit_mod.show();
+			tr.after(edit_mod);
+			tr.remove();
+		},'json');
+}
+
+function cancelSave(event) 
+{
+	var tr = $(event).parents('.c-tr');
+	var mod_id = tr.find(".n-id").text();
+	$.post("http://api.nverhe.com/CRFSvr/model", { id: mod_id },
+		function (res)
+		{
+			var obj = res.data;
+			var row = $("#viewNode").clone();
+			row.attr("id", obj.ID);
+			row.find(".n-checkbox").val(obj.id);
+			row.find(".n-id").text(obj.id);
+			row.find(".n-name").text(obj.name);
+			row.find(".n-pid").text(obj.PROJECT_NAME);
+			row.find(".n-hid").text(obj.HOSPITAL_NAME);
+			row.find(".n-datetime").text(obj.VERSION_DATE);
+			row.find(".n-btn-preview").attr('href', 'preview.html?id=' + mod_id);
+			row.find(".n-btn-preview-lable").attr('href', 'preview_lable.html?id=' + mod_id);
+			row.find(".n-btn-edit").attr('href', 'editor.html?id=' + mod_id);
+			row.show();
+			tr.after(row);
+			tr.remove();
+		}, 'json');
+}
+
+function search(currentPage)
+{
+	$.post("http://api.nverhe.com/CRFSvr/allTemplates", {keyword: $('#keyword').val(), p:currentPage}, function (res)
+	{
+		if (res.code == 0)
+		{
+			$("#editNode").nextAll().remove();
+			for (var i=0; i<res.data.length; i++)
+			{	
+				var obj = res.data[i];
+				var row = $("#viewNode").clone();
+				row.attr("id", obj.ID);
+				row.find(".n-checkbox").val(obj.ID);
+				row.find(".n-id").text(obj.ID);
+				row.find(".n-name").text(obj.name);
+				row.find(".n-pid").text(obj.PROJECT_NAME);
+				row.find(".n-hid").text(obj.HOSPITAL_NAME);
+				row.find(".n-datetime").text(obj.VERSION_DATE);
+				row.find(".n-btn-preview").attr('href', 'preview.html?id=' + obj.ID);
+				row.find(".n-btn-preview-lable").attr('href', 'preview_lable.html?id=' + obj.ID);
+				row.find(".n-btn-edit").attr('href', 'editor.html?id=' + obj.ID);
+				row.show();
+				$("#templatesTable").append(row);
+			}
+		}
+
+		$('#pager').bootstrapPaginator(
+				{
+					bootstrapMajorVersion:3,
+					currentPage: currentPage,
+					totalPages: res.countPage,
+					numberOfPages: 10,
+					onPageClicked: function(e, originalEvent, type, page)
+					{
+						search(page);
+					}
+				});
+
+	}, "json");
+}
+
+function signOut() {
+//	console.log(zq_getCookie("e_username"));
+	zq_delCookie("e_username");
+	location = "login.html";
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,301 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>显示隐藏逻辑</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<!--, user-scalable=no  可以禁用其缩放-->
+	<link href="./libs/bootstrap-3.3.7.css" rel="stylesheet">
+	<link href="./libs/font-awesome.css" rel="stylesheet">
+	<link href="./libs/bootstrap-select.css" rel="stylesheet">
+	<link href="./libs/editor.css" rel="stylesheet">
+	<script src="./libs/jquery-1.12.4.js"></script>
+	<script src="./libs/bootstrap-3.3.7.js"></script>
+	<script src="./libs/bootstrap-select.js"></script>
+	<script src="./libs/bootstrap-select-zh_CN.js"></script>
+	<script src="./libs/editor.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+	<ul id="myTab" class="nav nav-tabs">
+		<li  class="active"><a href="#directTab" data-toggle="tab">依赖控制</a></li>
+		<li><a href="#formulaTab" data-toggle="tab">公式控制</a></li>
+	</ul>
+	<div id="myTabContent" class="tab-content">
+		<div class="tab-pane fade in active" id="directTab">
+			<div class="col-sm-12">
+				<select id="elementID" class="sym-eid form-control" onchange="directElementChange();">
+					<optgroup label=""></optgroup>
+					<option value="0">无(清空所依赖的控件)</option>
+				</select>
+			</div>
+			<div class="row">
+				<div class="col-sm-12" id="directToValueDiv">
+					<input  name="directToValue" type="checkbox"/>
+				</div>
+			</div>
+			<div class="panel-footer text-center">
+				<button onclick="saveDirectShow();" class="btn btn-primary">保存</button>
+			</div>
+		</div>
+		<div class="tab-pane fade in" id="formulaTab">
+			<div class="panel-body">
+				<div class="row">
+					<div class="form-group" style="margin: 0px;">
+						<label class="control-label">
+							<input id="cSatisfy" type="checkbox" />当如下条件满足时显示该网格
+						</label>
+					</div>
+					<iframe class="modal-content" id="formulas" name="formulas" frameborder="0" style="width: 100%;min-height: 400px;" src="formulas.html"></iframe>
+				</div>
+				<div id="cmpDiv" class="row">
+					<div class="form-group">
+						<label class="control-label">
+							<input id="Radio1" type="radio" name="compare" value=">" /> &gt;
+						</label>
+					</div>
+					<div class="form-group">
+						<label class="control-label">
+							<input id="Radio4" type="radio" name="compare" value="=" /> =
+						</label>
+					</div>
+					<div class="form-group">
+						<label class="control-label">
+							<input id="Radio3" type="radio" name="compare" value="<" /> &lt;
+						</label>
+					</div>
+				</div>
+				<div  class="row">
+					<input id="toValue" type="text" class="form-control"/>
+				</div>
+			</div>
+			<div class="panel-footer text-center">
+				<button onclick="saveFormulaShow(this);" class="btn btn-primary">保存</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script type='text/javascript'>
+
+$(document).ready(function ()
+{
+	$('#directToValueDiv').hide();
+
+	var selectNode = $("#elementID");
+	var optionNode = selectNode.find("option");
+	var optgroupNode = selectNode.find("optgroup");
+	selectNode.addClass('selectpicker');
+	selectNode.attr('data-live-search', true);
+	$.post('http://api.nverhe.com/CRFSvr/searchElementAlias', {id: parent.template_id}, function (res)
+	{
+		if(res.code == 0)
+		{
+			var parentInputIds = parent.getInputId();
+			var inputs = res.data;
+			var newOptgroup_Page = optgroupNode.clone();
+			newOptgroup_Page.attr("label", "当前页");
+			newOptgroup_Page.show();
+			var newOptgroup_Cross_Form = optgroupNode.clone();
+			newOptgroup_Cross_Form.attr("label", "跨表单");
+			newOptgroup_Cross_Form.show();
+			for (var i = 0; i < inputs.length; i++)
+			{
+				var row = inputs[i];
+				var newOption = optionNode.clone();
+				var elementName = row.id;
+				newOption.val(elementName);
+				var showStr = row.alias + '（' + elementName+'）';
+				newOption.text(showStr);
+				if ($.inArray(elementName, parentInputIds) == -1)
+				{
+					newOptgroup_Cross_Form.append(newOption);
+				}
+				else
+				{
+					newOptgroup_Page.append(newOption);
+				}
+			}
+			optionNode.after(newOptgroup_Cross_Form);
+			optionNode.after(newOptgroup_Page);
+			var formulaOrElement = parent.getGrid().attr("data-formulaOrElement-ID");
+
+			//TODO 张强 根据data-formulaOrElement-ID回显公式  并测试一下公式控制 没有勾选之前选择的项
+			if (!$.isEmptyObject(formulaOrElement))
+			{
+				selectNode.val(formulaOrElement);
+				directElementChange();
+			}
+			
+			selectNode.selectpicker();
+		}
+		else
+		{
+			alert('System Error');
+			console.log(res);
+		}
+	}, 'json');
+
+	//TODO 张强 提示data-show-array
+});
+
+function directElementChange()
+{
+	var elementID = $('#elementID').val();
+	if (elementID == 0) return false;
+
+
+	$.post('http://api.nverhe.com/VOptionAliasSvr/search', {ealias_id: elementID}, function (res)
+	{
+		if(res.code == 0)
+		{
+			var initNode = $('#directToValueDiv');
+			initNode.siblings().remove();
+			for (var i=res.data.length - 1; i >= 0; i--)
+			{
+				var row = res.data[i];
+				var tempNode = initNode.clone();
+				tempNode.attr('id', c2id());
+				//zq val 改为了id 原来是avalue
+				tempNode.find('input').val(row.id);
+				initNode.after(tempNode);
+				tempNode.show();
+				tempNode.find('input').after(row.alias);
+			}
+		}
+	}, 'json');
+}
+
+function saveFormulaShow()
+{
+	var toGridID = parent.getGrid().attr('id');
+	if ( ! $("#cSatisfy").is(':checked'))
+	{
+		var fromElement = parent.$("[data-toGridID='"+toGridID+"']");
+		console.log(fromElement);
+		fromElement.removeAttr('onchange');
+		fromElement.removeAttr('data-toGridID');
+		parent.getGrid().removeAttr('data-formulaOrElement-ID');
+	}
+	else
+	{
+		var fid = $('#formulaSelect', frames['formulas'].document).val();
+		if (fid == 0) {
+			alert('ERROR: 请选择公式');
+			return false;
+		}
+
+		$.post('http://api.nverhe.com/FormulaSvr/model', { id: fid }, function (res)
+		{
+			if (res.code == 0)
+			{
+				$(res.data.symbols).each(function (index, row)
+				{
+					var cmp = $("input[type='radio']:checked").val();
+					var element = parent.$("[name='" + row.eid + "']");
+					if (element.length == 0)
+					{
+						alert('System Error');
+						return true;
+					}
+					manyFormula("data-toGridID", toGridID, element);
+					manyFormula("data-cmp", cmp, element);
+
+					var tovalue = $('#toValue').val();
+					manyFormula("data-tovalue", tovalue, element);
+					element.attr("onchange", "zq_formulaHide(" + fid + ", " + element.attr("data-cmp") + ", " + element.attr("data-tovalue") + ", " + element.attr("data-toGridID") + ");");
+					parent.getGrid().attr("data-formulaOrElement-ID", fid);
+				});
+			}
+		}, 'json');
+	}
+}
+
+function manyFormula(data_name, value, element)
+{
+	var arr = "";
+	if ($.isEmptyObject(element.attr(data_name)))
+	{
+		element.attr(data_name, "['" + value + "']");
+	}
+	else
+	{
+		arr = element.attr(data_name);
+		arr = arr.substr(1, arr.length - 2);
+		arr += ",'" + value + "'";
+		element.attr(data_name, "[" + arr + "]");
+	}
+}
+
+//直接绑定某控件
+function saveDirectShow()
+{
+	var toGridID = parent.getGrid().attr('id');
+
+	var elementID = $('#elementID').val();
+	if(elementID == 0)
+	{
+		//删除绑定的事件
+		var fromElement = parent.$("[data-toGridID='"+toGridID+"']");
+		fromElement.removeAttr('onchange');
+		fromElement.removeAttr('data-show-array');
+		fromElement.removeAttr('data-toGridID');
+		parent.getGrid().removeAttr('data-formulaOrElement-ID');
+		parent.getGrid().removeClass('hidden');
+		parent.getGrid().find('script').remove();
+	}
+	else
+	{
+		//添加绑定时间
+		var values = $("input[name='directToValue']:checked");
+		if(values.length == 0) return false;
+
+		var tovalueStr = '';
+		//var fromElementValues = [];
+		values.each(function (index, row)
+		{
+			tovalueStr += ',' + $(row).val();
+			//fromElementValues.push(parent.$('#e2v_'+$(row).val())[0]);
+		});
+
+		var fromElements = parent.$("[name='"+elementID+"']");
+
+		tovalueStr = tovalueStr.substr(1);
+		var showStr = "[["+tovalueStr+"],'"+toGridID+"']";
+		var showArrayStr = $(fromElements).attr('data-show-array');
+		if(showArrayStr == undefined) showArrayStr = "["+showStr+"]";
+		else showArrayStr = showArrayStr.substr(0, showArrayStr.length-1)+","+showStr+"]";
+
+		if(fromElements.length == 0) //跨表单显示控制
+		{
+			//跨表单变量
+			var script = "directGlobalHide('"+parent.getGrid().attr('id')+"', '"+elementID+"', ["+tovalueStr+"]);";
+			parent.getGrid().append('<script>'+script+'<\/script>');
+		}
+		else // 当前表单显示控制
+		{
+			fromElements.attr("onchange", "directFormShow(this, $(this).attr('data-show-array'));");
+			fromElements.attr('data-show-array', showArrayStr);
+			fromElements.attr('data-toGridID', toGridID);
+
+			parent.getGrid().attr('data-formulaOrElement-ID', elementID);
+			parent.getGrid().css('display', 'none');
+		}
+	}
+}
+
+function addShow_Hide(c_input, fid, comparisonValue, operator)
+{
+			//		var sid = c2id();
+			var obj = {};
+			//		obj.id = sid;
+			obj.c_input = c_input; //需要控制显示隐藏的标签
+			obj.fid = fid; //公式编号
+			obj.comparisonValue = comparisonValue; //比较值
+			obj.operator = operator; //比较方式 >、=、<
+			window.formula.show_hide = obj;
+			parent.window.formulas[fid].show_hide = window.formula.show_hide;
+			//		return sid;
+		}
+</script>
+</body>
+</html>

@@ -1,0 +1,763 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>设置EPM数据元</title>
+	<link href="./libs/bootstrap.css" rel="stylesheet" />
+	<link href="./libs/font-awesome.css" rel="stylesheet" type="text/css" />
+	<link href="./libs/editor.css" rel="stylesheet" type="text/css" />
+	<script src="./libs/jquery-1.12.4.js"></script>
+	<script src="./libs/bootstrap-3.3.7.js"></script>
+	<script src="./libs/editor.js"></script>
+	<script src="./libs/My97DatePicker/WdatePicker.js"></script>
+	<script src="./libs/bootstrap-paginator.js"></script>
+</head>
+<body>
+<div class="container-full">
+	<div class="col-sm-12">
+		<i class="fa fa-diamond"></i> <label id="olderElement">该网格没有绑定任何数据元</label>
+		<!-- TODO 新人 外调kettle数据同步 -->
+	</div>
+	<div class="row">
+		<div class="col-sm-5">
+			<div class="row form-inline">
+					<select id="c-pid" class="form-control">
+						<option value="0">全部</option>
+					</select>
+					<div class="input-group">
+						<input id="keyword" onkeyup=" if(event.keyCode==13) {search(1);}" type="text" class="form-control" value="" placeholder="数据元关键字"/>
+						<span onclick="search(1);" class="input-group-addon btn btn-default" title="查询"><li class="fa fa-search"></li></span>
+					</div>
+			</div>
+			<table class="table table-bordered table-hover">
+				<tbody id="tableBody">
+				<tr id="viewNode">
+					<td nowrap="nowrap">
+						<button title="里面插入" onclick="btnSave('bellow');"><i class="fa fa-caret-square-o-left"></i></button>
+						<button title="下面插入" onclick="btnSave('inside');"><i class="fa fa-arrow-down"></i></button>
+					</td>
+					<td class="c-name">
+						<label style="width: 100%;">
+							<input onchange="radioClick(this);" name="elementRadio" class="c-radio" type="radio"  data-toggle="popover" data-placement="auto"/>
+						</label>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+			<ul id="pager"></ul>
+		</div>
+		<div class="col-sm-7">
+			<div class="row form-group" id="select_disable">
+				<div class="form-inline">
+					<select id="selectElementType" onclick="selectChange();" class="form-control">
+						<optgroup label="输入类">
+							<option value="S1">输入框</option>
+							<option value="S">输入框(S)</option>
+							<option value="BY">输入框(BY)</option>
+							<option value="N">数值框</option>
+						</optgroup>
+						<optgroup label="选择类">
+							<option value="L">单选框(展开型)</option>
+							<option value="S2">单选框(下拉型)</option>
+							<option value="S3">多选框(展开型)</option>
+							<option value="S4">多选框(下拉型)</option>
+						</optgroup>
+						<optgroup label="时间类">
+							<option value="D">日期</option>
+							<option value="T">时间</option>
+							<option value="DT">日期时间</option>
+						</optgroup>
+						<optgroup label="非EPM类">
+							<option value="TA">多行文本框</option>
+							<option value="RULE">刻度尺</option>
+							<option value="DEPEND">输入框(依赖型)</option>
+							<option value="IMPORT">导入固定值</option>
+							<option value="FILE">附件</option>
+							<option value="ADR">地址字典</option>
+							<option value="LINK">路径引导型</option>
+						</optgroup>
+					</select>
+				</div>
+			</div>
+			<table id="optionBox" class="c-cfg row table table-bordered table-hover">
+				<thead>
+				<tr>
+					<th>选项</th>
+					<th>选项值</th>
+					<th>计算值</th>
+					<th>排序</th>
+					<th>隐</th>
+				</tr>
+				</thead>
+				<tbody id="optionsBody">
+				<tr id="voptionNode">
+					<td><input type="text" class="c-opname form-control input-sm"/></td>
+					<td class="c-opvalue"></td>
+					<td style="">
+						<input type="text" class="c-tovalue form-control input-sm"/>
+					</td>
+					<td style="min-width: 50px; width: 50px;">
+						<a class="c-sorter-up" href="#"><i class="fa fa-arrow-up"></i></a>
+						<a class="c-sorter-down" href="#"><i class=" fa fa-arrow-down"></i></a>
+					</td>
+					<td class="text-center" style="min-width: 50px; width: 50px;">
+						<input class="c-option-remove" type="checkbox"/>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+			<div class="row c-cfg" id="textBox">
+				<div class="form-group">
+					<label class="">
+						<input id="Radio13" type="radio" name="borderType" value="0" checked="checked" />全边框
+					</label>
+					<label class="">
+						<input id="Radio16" type="radio" name="borderType" value="1" />下边框类型
+					</label>
+				</div>
+			</div>
+			<div class="row c-cfg" id="numberBox">
+				<div class="form-group">
+					<label>
+						<input id="Radio11" type="radio" name="num_type" value="0"/>整数
+					</label>
+					<label>
+						<input id="Radio12" type="radio" name="num_type" value="1" />小数
+					</label>
+					<input type="text" class="form-control eff-digit" placeholder="位有效数" value="" />
+					<label class="control-label">位有效数,默认两位小数。</label>
+				</div>
+				<div class="form-group">
+					<label class="control-label">
+						最小值</label>
+					<input type="text" class="form-control min-num" placeholder="最小值"  value="" />
+				</div>
+				<div class="form-group">
+					<label class="control-label">
+						最大值</label>
+					<input type="text" class="form-control max-num" placeholder="最大值"  value="" />
+				</div>
+			</div>
+			<div class="row c-cfg" id="dateBox">
+				<div class="form-group">
+					<label class="control-label" for="sDateType">
+						控件格式：</label>
+					<select id="sDateType" class="form-control">
+						<option value="MM月dd日yyyy年">月日年</option>
+						<option value="MM月dd日yyyy年 HH时mm分ss秒">月日年时分秒</option>
+						<option value="MM月dd日yyyy年 HH时mm分">月日年时分</option>
+						<option value="MM月dd日">月日</option>
+						<option value="HH时mm分ss秒">时分秒</option>
+						<option value="HH时mm分">时分</option>
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="row form-group">
+					<div class="form-inline">
+						<label class="control-label col-xs-2">标题 </label>
+						<div class=" col-xs-6">
+							<input id="elementName" type="text" class="form-control" />
+						</div>
+						<input id="nameBold" type="checkbox"/> 加粗
+						<input id="nameItalic" type="checkbox"/> 斜体
+					</div>
+				</div>
+				<div class="row form-group">
+				<div class="form-inline">
+						<label class="control-label col-xs-2">方向 :</label>
+						<div class="col-sm-8 input-group" id="layout">
+							<label><input type="radio" name="cfgDirection" value="c-left2right" checked="checked" />左右</label>
+							<label><input type="radio" name="cfgDirection" value="c-top2bottom" />上下</label>
+						</div>
+				</div>
+				</div>
+				<div class="form-group row">
+					<div class="col-xs-12">
+						<div class="col-xs-3">
+							<label class="control-label">标题比例</label>
+							<input id="Text6" type="text" value="4" class="form-control" placeholder="标题" />
+						</div>
+						<div class="col-xs-1"></div>
+						<div class="col-xs-3">
+							<label class="control-label">控件比例</label>
+							<input id="Text7" type="text" value="6" class="form-control" placeholder="控件" />
+						</div>
+						<div class="col-xs-1"></div>
+						<div class="col-xs-3">
+							<label class="control-label">备注比例</label>
+						<input id="Text8" type="text" value="0" class="form-control" placeholder="备注"/>
+						</div>
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="col-xs-12">
+						<div class="col-xs-3">
+							<label class="control-label">标题缩进</label>
+							<input id="title_indent" type="text" class="form-control" value="0"/>
+						</div>
+						<div class="col-xs-1"></div>
+						<div class="col-xs-3">
+							<label class="control-label">控件缩进</label>
+							<input id="input_indent" type="text" class="form-control" value="0"/>
+						</div>
+						<div class="col-xs-1"></div>
+						<div class="col-xs-3">
+							<label class="control-label">备注缩进</label>
+							<input id="tip_indent" type="text" class="form-control" value="0"/>
+						</div>
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="col-xs-12">
+						<div class="col-xs-5">
+							<label class="control-label">外间距</label>
+							<input id="Text4" type="text" placeholder="外间距" class="form-control" />
+						</div>
+						<div class="col-xs-1"></div>
+						<div class="col-xs-5">
+							<label class="control-label">内间距</label>
+							<input id="Text5" type="text" placeholder="内间距" class="form-control" />
+						</div>
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="col-xs-12">
+						<label class="control-label col-xs-12">备注 :</label>
+						<div class="col-xs-12 input-group">
+							<textarea id="textAreaTip" cols="31" rows="2" class="form-control"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div style="display: none;">
+		<table class='row prev_content table' style='table-layout:fixed;'  >
+			<thead>
+				<tr><th>选项</th><th class="text-center">选项值</th><th class="text-center">计算值</th></tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+		<div id="c-left2right" class="form-group">
+			<label class="c-title control-label"></label>
+			<div class="c-input"></div>
+			<div class="c-tip"></div>
+		</div>
+		<div id="c-top2bottom" class="form-group">
+			<div class="row">
+				<label class="c-title"></label>
+			</div>
+			<div class="row">
+				<div class="c-input"></div>
+			</div>
+			<div class="row">
+				<div class="c-tip"></div>
+			</div>
+		</div>
+		<input type='text' class="form-control c-tpl-text c-element"/>
+		<input type='radio' class="c-tpl-radio c-element"/>
+		<input type='checkbox' class="c-tpl-checkbox c-element"/>
+		<input type='text' value="" placeholder='请输入数值' class="form-control c-tpl-number c-element"/>
+		<select class="form-control c-tpl-select c-element"><option value='0'>请选择</option></select>
+		<input class="form-control c-tpl-date c-element" type="text" onClick=""/>
+		<textarea class="form-control c-tpl-textarea c-element" ></textarea>
+		<div class="input-group c-tpl-range c-element">
+			<label class="input-group-addon c-range-min"></label>
+			<input id="c-input-range" type="range" class="form-control c-element" onmousemove="zq_rangeShowValue(this)" onkeydown="zq_rangeShowValue(this)"/>
+			<label class="input-group-addon c-range-max"></label>
+			<label class="input-group-addon c-range-value"></label>
+		</div>
+		<input type="file" class="c-tpl-file c-element" />
+		<div id="distpicker5" class="form-inline c-tpl-citys">
+			<div class="form-group">
+			  	<select class="form-control c-tpl-picity c-element" id="province10"></select>
+			</div>
+			<div class="form-group">
+			  	<select class="form-control c-tpl-picity c-element" id="city10"></select>
+			</div>
+			<div class="form-group">
+			  	<select class="form-control c-tpl-picity c-element" id="district10"></select>
+			</div>
+			<script src="./libs/pickcity/distpicker.data.js"></script>
+			<script src="./libs/pickcity/distpicker.js"></script>
+			<script src="./libs/pickcity/main.js"></script>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function ()
+{
+	if(parent.grid == undefined)
+	{
+		//alert('System Error');
+	}
+	else
+	{
+		var gridElement = parent.getGrid().find('.c-element');
+		if(gridElement.length > 0)
+		{
+			var tempID = gridElement.attr('name');
+			tempID = tempID.substr(0, tempID.indexOf('_'));
+			$('#olderElement').text(parent.grid.find('.c-title').text()+'（'+tempID+'）');
+		}
+	}
+
+	$('#viewNode').hide();
+	$('.c-cfg').hide();
+	$('#voptionNode').hide();
+
+	$.post("http://api.nverhe.com/ProjectSvr/search", {},
+			function(res){
+				var selectNode = $('#c-pid');
+				selectNode.find('option:first').siblings().remove();
+				for(var i=0; i<res.data.length; i++){
+					var obj = res.data[i];
+					var option = "<option value='"+obj.id+"'>"+obj.name+"</option>"
+					selectNode.append(option)
+				}
+			},'json');
+
+	search(1);
+});
+
+function btnSave(insideOrBellow) {
+	//创建元的新ID：元ID_模板ID[_顺序号]
+	var elementRadio = $("input[name='elementRadio']:checked");
+	if (elementRadio.length == 0) {
+		alert('没有选中数据元');
+		return false;
+	}
+
+	var formElementName = elementRadio.data('element').METADATA_IDENTIFY + '_' + parent.template_id;
+	if (parent.$("[name='" + formElementName + "']").length > 0) {
+		$.post('http://api.nverhe.com/CRFSvr/nextSorter', {id: parent.template_id}, function (res) {
+			if (res.code == 0) {
+				formElementName += '_'+res.data;
+				continueSave(formElementName, insideOrBellow);
+			} else alert('API Error');
+		}, 'json');
+	}
+	else {
+		continueSave(formElementName, insideOrBellow);
+	}
+}
+
+function continueSave(formElementName, insideOrBellow)
+{
+	//创建新布局
+	var layout_method = $("input[name='cfgDirection']:checked").val();
+	var f_node = $("#"+layout_method+"").clone();
+	f_node.removeAttr('id');
+
+	//根据数据类型填充控件
+	var input_type = $("#selectElementType").val();
+	if (input_type == 'S2')
+	{
+		cookMultiAndSelect(f_node.find('.c-input'), formElementName);
+	}else if (input_type == 'S4')
+	{
+		cookMultiAndSelect(f_node.find('.c-input'), formElementName);
+		f_node.find('select').attr('multiple','multiple')
+	}else if (input_type == 'S3')
+	{
+		cookRadioAndCheckbox(f_node.find('.c-input'), 'checkbox', formElementName);
+	}else if (input_type == 'L')
+	{
+		cookRadioAndCheckbox(f_node.find('.c-input'), 'radio', formElementName);
+	}else if(input_type == 'N')
+	{
+		var radio_val = $('#numberBox input:radio:checked').val();
+			
+		var min_num = $('.min-num').val();
+		var max_num = $('.max-num').val();
+		var N_module = $('.c-tpl-number').clone();
+
+		N_module.attr("type", "number");
+		if (!$.isEmptyObject(max_num))
+		{
+			N_module.attr("max", max_num);
+		}
+		if (!$.isEmptyObject(max_num))
+		{
+			N_module.attr("min", min_num);
+		}
+		if (radio_val == 1)
+		{
+			var eff_digit = $('.eff-digit').val();
+			N_module.attr("step", returnStep(eff_digit));
+		}
+		f_node.find('.c-input').append(N_module);
+	}else if (input_type == 'DT' || input_type == 'T' || input_type == 'D')
+	{
+		//TODO 用formElementName
+		var date_format = $('#sDateType').val();
+		var tempNode = $('.c-tpl-date').clone();
+		tempNode.attr("onClick","WdatePicker({dateFmt:'"+date_format+"'})");
+		f_node.find('.c-input').append(tempNode);
+	}
+	else if (input_type == 'RULE') 
+	{
+		var radio_val = $('#numberBox input:radio:checked').val();//0整数
+		var eff_digit = $('.eff-digit').val(); //有效位数
+		var min_num = $('.min-num').val();
+		var max_num = $('.max-num').val();
+
+		var rangeNode = $(".c-tpl-range").clone();
+		rangeNode.find(".c-range-min").text(min_num);
+		rangeNode.find(".c-range-max").text(max_num);
+		rangeNode.find(".c-range-value").text(min_num);
+
+		var c_element = rangeNode.find(".c-element");
+		if (!$.isEmptyObject(max_num))
+		{
+			c_element.attr("max", max_num);
+		}
+		if (!$.isEmptyObject(max_num))
+		{
+			c_element.attr("min", min_num);
+		}
+		if (radio_val == 1)
+		{
+			var eff_digit = $('.eff-digit').val();
+			c_element.attr("step", returnStep(eff_digit));
+		}
+
+		var c_input = f_node.find('.c-input');
+		c_input.append(rangeNode);
+	}
+	else if (input_type == 'TA')
+	{
+		var tempNode = $('.c-tpl-textarea').clone();
+		f_node.find('.c-input').append(tempNode);
+	}
+	else if (input_type == 'ADR')
+	{
+		var tempNode = $('.c-tpl-citys').clone();
+		f_node.find('.c-input').append(tempNode);
+	}
+	else if(input_type == 'IMPORT')
+	{
+		//TODO 张宇 导入型 和传奇 商量
+	}
+	else if(input_type == 'IMPORT')
+	{
+		//TODO 下拉搜索
+	}
+	else if(input_type == 'LINK')
+	{
+		var linkNode = returnTextNode();
+		linkNode.attr("data-show-type", "link");
+		f_node.find('.c-input').append(linkNode);
+	}
+	else if (input_type == 'FILE')
+	{
+		var fileNode = $('.c-tpl-file').clone();
+		f_node.find('.c-input').append(fileNode);
+	}
+	else
+	{
+		var tempNode = returnTextNode();
+		f_node.find('.c-input').append(tempNode);
+	}
+
+	f_node.find('.c-title').addClass("col-sm-offset-" + $('#title_indent').val());
+	f_node.find('.c-input').addClass("col-sm-offset-" + $('#input_indent').val());
+	f_node.find('.c-tip').addClass("col-sm-offset-" + $('#tip_indent').val());
+
+	var titleSpan = parseInt($('#Text6').val());
+	if(titleSpan > 0) {
+		f_node.find('.c-title').addClass("col-sm-"+titleSpan);
+		f_node.find('.c-title').text($('#elementName').val());
+	}else if(titleSpan == 0){
+		f_node.find('.c-title').remove();
+	}
+	f_node.find('.c-input').addClass("col-sm-"+$('#Text7').val());
+	var tipSpan = parseInt($('#Text8').val());
+	if(tipSpan > 0) {
+		f_node.find('.c-tip').addClass("col-sm-"+tipSpan);
+		f_node.find('.c-tip').text($('#textAreaTip').val());
+	}else if(tipSpan == 0)
+	{
+		f_node.find('.c-tip').remove();
+	}
+
+
+	var f_margin = $('#Text4').val();
+	var f_padding = $('#Text5').val();
+	f_node.css("padding", f_padding);
+	f_node.css("margin", parseInt(f_margin));
+
+	f_node.find('.c-element').each(function(){
+		$(this).attr('id',c2id());
+	})
+	f_node.find('.c-element').attr('name', formElementName);
+	f_node.find('.c-title').attr('title', formElementName);
+
+	var newGrid = parent.cloneGrid();
+	newGrid.find('.c-content').append(f_node);
+
+	if(insideOrBellow == 'inside')
+	{
+		parent.currentAfter(newGrid);
+	}
+	else if(insideOrBellow == 'bellow')
+	{
+		parent.currentAppend(newGrid);
+	}
+}
+
+function returnTextNode()
+{
+	var Newnode = $('.c-tpl-text').clone();
+	if ($('#textBox input:checked').val() == 1)
+	{
+		Newnode.css('border', 'none');
+		Newnode.css('border-bottom', '1px solid #dfdfdf');
+	}
+	return Newnode;
+}
+
+function returnStep(eff_digit)
+{
+	if (!$.isEmptyObject(eff_digit)) {
+		var stepVal = "0.";
+		for (var i = 1; i < eff_digit; i++) {
+			stepVal += "0";
+		}
+		stepVal += "1";
+		return stepVal;
+	} else 
+	{
+		return "0.01";
+	}
+}
+
+function search(currentPage)
+{
+	//TODO 按集和组搜索
+	$.post('http://api.nverhe.com/EPMSvr/allElements', {pid:$('#c-pid').val(), keyword:$('#keyword').val(),p:currentPage}, function(res)
+	{
+		if(res.code != 0) return false;
+		$('#viewNode').nextAll().remove();
+		for (var i=0; i<res.data.length; i++)
+		{	
+			var prev_content = $('.prev_content').clone();
+			var row = res.data[i];
+			var newNode = $('#viewNode').clone();
+			newNode.find('.c-radio').val(row.METADATA_IDENTIFY);
+			newNode.find('.c-radio').attr('title', row.METADATA_IDENTIFY);
+			newNode.find('.c-radio').after(' '+row.METADATA_NAME);
+			newNode.find('.c-radio').attr('title', row.METADATA_IDENTIFY+'---'+row.CREATE_MAN);
+			if(row.data){
+				for(var j=0; j<row.data.length; j++){
+					if(j == 4) break
+					var row_data = row.data[j];
+					var name = row_data.FIELDCODE_VALUE_CN_NAME;
+			 		var name_id = row_data.FIELDCODE_VALUE;
+					var compute = row_data.FIELD_COMPUTE;
+					var list = "<tr><td class='first_td'>"+name+"</td><td class='text-center'>"+name_id+"</td><td class='text-center'>"+compute+"</td></tr>"
+			 		prev_content.find('tbody').append(list);
+			 		prev_content.find('.first_td').css({'overflow':'hidden','white-space':'nowrap','text-overflow':'ellipsis'});
+				}
+				newNode.find('.c-radio').attr('data-content',prev_content.prop("outerHTML"))
+			}
+			newNode.show();
+			newNode.find('.c-radio').data('element', row);
+			$('#tableBody').append(newNode);
+		}
+		$("[data-toggle='popover']").popover({
+			  html:true
+		});
+		$('#pager').bootstrapPaginator(
+				{
+					bootstrapMajorVersion:3,
+					currentPage: currentPage,
+					totalPages: Math.ceil(res.countPage),
+					onPageClicked: function(e, originalEvent, type, page)
+					{
+						search(page);
+					}
+				});
+
+	}, 'json').error(function(res){console.log(res.responseText)});
+}
+
+function radioClick(event)
+{
+	$('.popover').remove();
+
+	element = $(event).data('element');
+	var input_type = element.DATA_META_DATATYPE;
+	if(element == undefined)
+	{
+		$('#btnSave').attr('disabled', true);
+	}
+	else
+	{
+		$('#btnSave').attr('disabled', false);
+	}
+	if(input_type=='L' || input_type=='S2' || input_type=='S3' || input_type=='S4')
+	{
+		$('#selectElementType').val('L');
+	}else{
+		$('#selectElementType').val(element.DATA_META_DATATYPE);
+	}
+	selectChange();
+	$('#elementName').val(element.METADATA_NAME);
+	//DOTO 靖宇 相同办法加上单位
+	$('#textAreaTip').val('');
+	$('#default_data').empty();
+}
+
+
+function selectChange()
+{
+	$('.c-cfg').hide();//隐藏所有控件配置
+	var inputType = $("#selectElementType").val();
+	if(inputType=='L' || inputType=='S2' || inputType=='S3' || inputType=='S4')
+	{
+		if(element.data) {
+			$('#voptionNode').siblings().remove();
+			for(var i=0; i<element.data.length; i++)
+			{
+				var voption = element.data[i];
+				var newNode = $('#voptionNode').clone();
+				newNode.attr('id', voption.id);
+				newNode.find('.c-opname').val(voption.FIELDCODE_VALUE_CN_NAME);
+				newNode.find('.c-opvalue').text(voption.FIELDCODE_VALUE);
+				newNode.find('.c-tovalue').val(voption.FIELDCODE_VALUE);
+				newNode.find('.c-sorter-up').click(function()
+				{
+					var thisTR = $(this).parent().parent();
+					var prev = thisTR.prev();
+					if(prev.attr('id') == 'voptionNode') return false;
+					prev.before(thisTR);
+				});
+				newNode.find('.c-sorter-down').click(function()
+				{
+					var thisTR = $(this).parent().parent();
+					var next = thisTR.next();
+					if(next.length == 0) return false;
+					next.after(thisTR);
+				});
+				newNode.find('.c-option-remove').click(function()
+				{
+					$(this).parent().parent().remove();
+				});
+				newNode.show();
+				$('#optionsBody').append(newNode);
+			}
+			$('#optionBox').show();
+		}else{//多选项但没有值
+			alert('EPM数据元类型和对应的值域存在矛盾');
+			$('#selectElementType').val('S1');
+			$('#textBox').show();
+		}
+	}else if(inputType == 'N'){
+		$('#numberBox').show();
+	}else if(inputType=='DT' || inputType=='D' || inputType=='T'){
+		$('#dateBox').show();
+	}else if(inputType == 'TA'){
+	}else if(inputType == 'FILE'){
+	}else if(inputType == 'LINK'){
+	}else if(inputType == 'ADR'){
+	}else if (inputType == 'RULE') 
+	{
+		$('#numberBox').show();
+	}else{
+		$('#textBox').show();
+	}
+}
+
+function cookRadioAndCheckbox(parentNode, type, formElementName)
+{
+	var opList = $('#optionsBody').find('tr');
+	var voptionArray = [];
+	for(var i=1; i<opList.length; i++)
+	{
+		var tr = $(opList[i]);
+		var tempObj = {};
+		tempObj.voption_id = tr.attr('id');
+		tempObj.ealias_id = formElementName;
+		tempObj.alias =  tr.find('.c-opname').val();
+		tempObj.avalue =  tr.find('.c-tovalue').val();
+		tempObj.sorter = i;
+		voptionArray.push(tempObj);
+	}
+	//console.log(JSON.stringify(voptionArray));
+	$.post('http://api.nverhe.com/VOptionAliasSvr/save',
+			{ealias_id:formElementName, voptions: JSON.stringify(voptionArray)}, function(res)
+			{
+				if(res.code == 0)
+				{
+					for(var i=0; i<res.data.length; i++)
+					{
+						var row = res.data[i];
+						//id是别值表的ID
+						var tempNode = $('.c-tpl-'+type).clone();
+						if(i >=1){
+							tempNode.css("margin-left",10)
+						}
+						tempNode.css({'height':'14','vertical-align':'top'})
+						tempNode.attr('id', 'e2v_'+row.id);
+						tempNode.val(row.id);
+						tempNode.attr('name', formElementName);
+						tempNode.attr('title', row.alias);
+						//TODO 靖宇 包括一层label，再radio-list  radio-inline
+						parentNode.append(tempNode);
+						tempNode.after(row.alias);
+					}
+				}
+				else
+				{
+					alert('System Error');
+				}
+			}, 'json');
+}
+
+function cookMultiAndSelect(parentNode, formElementName)
+{
+	var tempSelect = $('.c-tpl-select').clone();
+	var opList = $('#optionsBody').find('tr');
+	var voptionArray = [];
+	for(var i=1; i<opList.length; i++)
+	{
+		var tr = $(opList[i]);
+		var tempObj = {};
+		tempObj.voption_id = tr.attr('id');
+		tempObj.ealias_id = formElementName;
+		tempObj.alias =  tr.find('.c-opname').val();
+		tempObj.avalue =  tr.find('.c-tovalue').val();
+		tempObj.sorter = i;
+		voptionArray.push(tempObj);
+	}
+	parentNode.append(tempSelect);
+
+	$.post('http://api.nverhe.com/VOptionAliasSvr/save',
+			{ealias_id:formElementName, voptions: JSON.stringify(voptionArray)}, function(res)
+			{
+				if(res.code == 0)
+				{
+					for(var i=0; i<res.data.length; i++)
+					{
+						var row = res.data[i];
+						//id是别值表的ID
+						var newOption = tempSelect.find('option:first').clone();
+						newOption.attr('id', 'e2v_'+row.id);
+						newOption.val(row.id);
+						newOption.text(row.alias);
+						tempSelect.append(newOption);
+					}
+				}
+				else
+				{
+					alert('System Error');
+				}
+			}, 'json');
+}
+
+</script>
+</body>
+</html>

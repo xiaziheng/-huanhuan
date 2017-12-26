@@ -1,0 +1,388 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>CDE编辑器2.0</title>
+    <link id="bootstrap-style" href="./libs/bootstrap.css" rel="stylesheet">
+    <link href="./libs/font-awesome.css" rel="stylesheet">
+    <link href="./libs/editor.css" rel="stylesheet">
+    <script src="./libs/jquery-1.12.4.js"></script>
+    <script src="./libs/bootstrap-3.3.7.js"></script>
+    <script src="./libs/editor.js"></script>
+    <script src="./libs/My97DatePicker/WdatePicker.js"></script>
+</head>
+<body>
+<div class="container text-center" style="position: fixed; z-index: 2; background-color: #fff; width: 100%;">
+    <div class="row c-headbar">
+        <div class="form-inline col-sm-4">
+            <a href="index.html" class="btn btn-primary">页集</a>
+            <button onclick="openModalWin(this, 'editor_setting.html');" class="btn btn-primary">配置</button>
+            <button onclick="btnPreview();" class="btn btn-primary">预览</button>
+            <button onclick="btnSave();" class="btn btn-primary">保存</button>
+            <button onclick="preSave();//TODO 张宇 撤销保存 and 不保存撤销" class="btn btn-primary">撤销</button>
+            <label id="tip" class="text-warning"></label>
+        </div>
+        <ul class="list-inline col-sm-6">
+            <!-- TODO 根据是否有东西，显示灰色 -->
+            <button onclick="$('.c-grid-checkbox').removeAttr('checked');"><i class="fa fa-check-square-o"></i></button>
+            <button onclick="addGrid('before')" title="添加上(左)网格"><i class="fa fa-caret-square-o-left"></i></button>
+            <button href="#" onclick="addGrid('after')" title="添加下(右)网格"><i class="fa fa-caret-square-o-right"></i></button>
+            <button onclick="openModalWin(this,'multi_grid.html')" title="添加多行多列网格"><i class="fa fa-th"></i></button>
+            <button onclick="deleteGrid();" title="删除网格"><i class="fa fa-trash-o"></i></button>
+            <button onclick="openModalWin(this, 'grid_layout.html');" title="样式"><i class="fa fa-cog"></i></button>
+            <button  onclick="openModalWin(this, 'wysiwyg.html');" title="自由文本"><i class="fa fa-text-width"></i></button>
+            <button onclick="showSidebar();"><i class="fa fa-angle-double-right"></i></button>
+        </ul>
+    </div>
+</div>
+<div style="height: 36px;"></div>
+<div id="editorBody" class="container .editorBody col-xs-9">
+    <div class="c-grid s-win col-sm-12" id="initGrid">
+        <div class="c-toolbar form-inline clearfix">
+            <input type="checkbox" class="c-grid-checkbox"/>
+            <i class="fa fa-arrow-up c-sorter-up" onclick="up_setting(this)" style="cursor:pointer; color: blue;"></i>   
+            <i class=" fa fa-arrow-down c-sorter-down" onclick="down_setting(this)" style="cursor:pointer; color: blue;"></i>
+            <i class=" fa fa-arrows-alt c-sorter-down"  onclick="goOuter(this);" style="cursor:pointer; color: blue;"></i>
+            <i class=" fa fa-compress c-sorter-down" onclick="goInner(this);" style="cursor:pointer; color: blue;"></i>
+        </div> 
+        <div class="c-content c-indent"></div>
+    </div>
+</div>
+<div id="sidebar" class="col-xs-3" style="position: fixed; right: 0;top: 0; z-index: 3;">
+    <div class="panel-group" id="accordion" style="height: 100%;">
+        <div class="panel panel-default">
+            <div class="panel-heading" style="padding: 5px;">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" style="display: inline-block; width: 90%;">数据元</a>
+                <a class="pull-right" onclick="hideSidebar();" href="#"><i class="fa fa-close"></i></a>
+            </div>
+            <div id="collapseOne" class="collapse in">
+                <iframe src="epm_element.html" class="modal-content" frameborder="0" style="width: 100%;height: 400px;"></iframe>
+            </div>
+        </div>
+        <div class="panel panel-default" style="margin-top: 0;">
+            <div class="panel-heading" style="padding: 5px;">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix" style="display: inline-block; width: 100%;" onclick="refresh_show()">有条件显示</a>
+            </div>
+            <div id="collapseSix" class="collapse">
+                <iframe src="show_hide.html" class="modal-content" frameborder="0" style="width: 100%;height: 400px;"></iframe>
+            </div>
+        </div>
+        <div class="panel panel-default" style="margin-top: 0;">
+            <div class="panel-heading" style="padding: 5px;">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" style="display: inline-block; width: 100%;">简单质控</a>
+            </div>
+            <div id="collapseThree" class="collapse">
+                <iframe src="qc_simple.html" class="modal-content" frameborder="0" style="width: 100%;height: 400px;"></iframe>
+            </div>
+        </div>
+        <div class="panel panel-default" style="margin-top: 0;">
+            <div class="panel-heading" style="padding: 5px;">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" style="display: inline-block; width: 100%;">数据集</a>
+            </div>
+            <div id="collapseTwo" class=" collapse">
+                <iframe src="epm_dataset.html" class="modal-content" frameborder="0" style="width: 100%;height: 400px;"></iframe>
+            </div>
+        </div>
+        <div class="panel panel-default" style="margin-top: 0;">
+            <div class="panel-heading" style="padding: 5px;">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseCRF" style="display: inline-block; width: 100%;">小模板</a>
+            </div>
+            <div id="collapseCRF" class=" collapse">
+                <iframe src="dataset.html" class="modal-content" frameborder="0" style="width: 100%;height: 400px;"></iframe>
+            </div>
+        </div>
+        <div class="panel panel-default" style="margin-top: 0;">
+            <div class="panel-heading" style="padding: 5px;">
+                <!-- 公式弹出层 -->
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive" style="display: inline-block; width: 100%;" onclick="refresh()">公式编辑器</a>
+            </div>
+            <div id="collapseFive" class="collapse">
+                <iframe class="modal-content" frameborder="0" style="width: 100%;height: 400px;"></iframe>
+            </div>
+        </div>
+        <div class="panel panel-default" style="margin-top: 0;">
+            <div class="panel-heading" style="padding: 5px;">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour" style="display: inline-block; width: 100%;">复杂质控</a>
+            </div>
+            <div id="collapseFour" class="collapse">
+                <iframe src="qc_complicated.html" class="modal-content" frameborder="0" style="width: 100%;height: 400px;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 模态框（Modal） -->
+<div id="modalWin" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 80%;height: 90%">
+        <iframe class="modal-content" id="iWin" frameborder="0" style="width: 100%;height: 100%"></iframe>
+    </div>
+</div>
+<script type="text/javascript" id="jsForm">
+$(document).ready(function ()
+{
+    //初始化常用变量
+    window.initGrid = $('#initGrid').clone();
+    window.template_id = zq_get_url_param('id');
+	zq_showViewStyle();
+    if(template_id==null || template_id==0)
+    {
+        alert('system error');
+        return false;
+    }
+    $.post('http://api.nverhe.com/CRFSvr/htmlStr', {id:template_id},
+            function(res)
+            {
+                if(res.code == 0)
+                {
+                    if(res.data.trim() == '')
+                    {
+                        return false;
+                    }
+                    $('#editorBody').html(res.data);
+                }
+            }, 'json');
+});
+
+function btnPreview()
+{
+	window.open('preview.html?id=' + zq_get_url_param("id"));
+}
+function up_setting(event){
+    var thisTR = $(event).parent().parent();
+    var prev = thisTR.prev();
+    if(prev.attr('id') == 'locationNode') return false;
+    prev.before(thisTR);
+}
+function down_setting(event){
+    var thisTR = $(event).parent().parent();
+    var next = thisTR.next();
+    if(next.attr('id') == 'locationNode') return false;
+    next.after(thisTR);
+}
+
+function btnSave()
+{
+    var inputs = $(".c-input");
+    var tempArray = [];
+    var opList = [];
+    for (var i = 0; i < inputs.length; i++)
+    {
+        var row = $(inputs[i]);
+        var tempObj = {};
+        tempObj.elementID = row.find(".c-element:first").attr('name');
+        tempObj.alias = row.siblings('.c-title').text();
+        tempArray.push(tempObj);
+        var element = row.find(".c-element:first");
+        if (element.is(":checkbox") || element.is("select") || element.is(":radio"))
+		{
+			opList.push(row);
+        }
+    }
+    $.post('http://api.nverhe.com/CRFSvr/save',
+            {id:template_id, htmlStr:$('#editorBody').html(), elements: JSON.stringify(tempArray)}, function(res)
+            {
+                if(res.code == 0)
+                {
+                    $('#tip').text(res.data);
+                    var index = 0;
+                    saveAlias(opList, index);
+                    //TODO 张强 将标记为不导出状态的元  保存到数据库
+                }
+                else
+                {
+                    alert('System Error');
+                    console.log(res);
+                }
+            }, 'json').error(function(res) {console.log(res.responseText)});
+}
+
+function saveAlias(opList, index)
+{
+	if ($.isEmptyObject(opList) || opList.length <= index)
+	{
+		return false;
+	}
+	var voptionArray = [];
+    var formElementName = '';
+
+    var row = opList[index];
+    var element = row.find(".c-element:first");
+    if (element.is(":checkbox") || element.is(":radio"))
+	{
+		var checkboxList = row.find(".c-element");
+        formElementName = row.find(".c-element:first").attr('name');
+		for (var i = 0; i < checkboxList.length; i++)
+		{
+			var node = $(checkboxList[i]);
+			var tempObj = {};
+			tempObj.ealias_id = formElementName;
+			tempObj.voption_id = node.attr('id');
+			tempObj.alias = node.attr("title");
+			tempObj.avalue = node.val();
+			tempObj.sorter = (i + 1);
+			voptionArray.push(tempObj);
+		}
+	}
+	else
+	{
+		var selectList = row.find(".c-element option");
+        formElementName = row.find(".c-element").attr('name');
+		for (var i = 1; i < selectList.length; i++)
+		{
+			var node = $(selectList[i]);
+			var tempObj = {};
+			tempObj.ealias_id = formElementName;
+			tempObj.voption_id = node.attr('id');
+			tempObj.alias = node.text();
+			tempObj.avalue = node.val();
+			tempObj.sorter = i;
+			voptionArray.push(tempObj);
+		}
+	}
+//	$.post('http://api.nverhe.com/VOptionAliasSvr/save',
+//	{ ealias_id: formElementName, voptions: JSON.stringify(voptionArray) },
+//	function (res)
+//	{
+//		if (res.code == 0)
+//		{
+//			index++;
+//			saveAlias(opList, index);
+//		}
+//		else
+//		{
+//			alert('System Error');
+//		}
+//	}, 'json');
+}
+
+function cloneGrid()
+{
+    var newGrid = initGrid.clone();
+    newGrid.attr("id", c2id());
+    return newGrid;
+}
+
+function currentAppend(newGrid)
+{
+    window.grids = $('.c-grid-checkbox:checked').parent().parent();//parents('.c-grid');
+    window.grid = grids.first();
+    if(grids.parents('.c-grid').length ==0 ){
+         grid.find('.c-content:first').append(newGrid);
+    }else{
+        grid.find('.c-content:first').empty();
+        grid.find('.c-content:first').append(newGrid);
+    }
+}
+
+function currentAfter(newGrid)
+{
+    window.grids = $('.c-grid-checkbox:checked').parent().parent();//parents('.c-grid');
+    window.grid = grids.first();
+    grid.after(newGrid);
+}
+
+function addGrid(direction) {
+    window.grids = $('.c-grid-checkbox:checked').parents('.c-grid:first');//parents('.c-grid');
+    window.grid = grids.first();
+
+    var newGrid = initGrid.clone();
+    newGrid.attr("id", c2id());
+    if (direction == 'before') {
+        grid.before(newGrid);
+    }
+    else if (direction == 'after') {
+        grid.after(newGrid);
+    }
+}
+
+function goOuter(event)
+{
+    var selfGrid = $(event).parents('.c-grid:first');
+    console.log(selfGrid.length);
+    var parentGrid = selfGrid.parents('.c-grid:first');
+    console.log(parentGrid.length);
+    if(parentGrid.length == 1)
+    {
+        parentGrid.after(selfGrid);
+    }
+}
+
+function goInner(event)
+{
+    var selfGrid = $(event).parents('.c-grid:first');
+    var preGrid = selfGrid.prev();
+    if(preGrid.length == 1)
+    {
+        preGrid.find('.c-content').append(selfGrid);
+    }
+}
+
+function deleteGrid()
+{
+    var tempGrids = $('.c-grid-checkbox:checked');
+    if(tempGrids.length == 0)
+    {
+        return false;
+    }
+    if(tempGrids.parent().parent().attr('id') == 'initGrid')
+    {
+        alert('不能删除初始节点');
+        return false;
+    }
+    if(confirm('确定删除选中的节点吗？'))
+    {
+        tempGrids.parent().parent().remove();
+    }
+}
+
+function hideSidebar()
+{
+    zq_removeClass($('#editorBody'));
+    $('#sidebar').hide();
+}
+function showSidebar()
+{
+    $('#editorBody').addClass('col-xs-9');
+    $('#sidebar').show();
+}
+function getGrids()
+{
+    //TODO 靖宇 点选选中框，并改变边框颜色，再点击取消。
+    // 滑动提示  Ctrl+组合件多选
+    //TODO 靖宇 默认灰色格，选中红色格。
+    //TODO 格式刷
+	return $('.c-grid-checkbox:checked').parent().parent();
+}
+
+function getGrid()
+{
+	var grids = $('.c-grid-checkbox:checked').parent().parent();
+	return grid = grids.first();
+}
+
+function getInputId()
+{
+	var input = $('.c-input').find(".c-element");
+	var inputIds = [];
+	for (var i = 0; i < input.length; i++)
+	{
+		if ($.inArray($(input[i]).attr("name"), inputIds) == -1)
+		{
+			inputIds.push($(input[i]).attr("name"));
+		}
+	}
+	return inputIds;
+}
+
+function refresh(){
+    console.log(1);
+    $('#collapseFive iframe').attr('src','formula.html');
+}
+
+function refresh_show(){
+    var randomnumber=Math.floor(Math.random()*1000);
+    $('#collapseSix iframe').attr('src','show_hide.html?'+randomnumber+'')
+}
+</script>
+</body>
+</html>

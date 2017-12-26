@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>CDE编辑器2.0</title>
+	<link href="./libs/bootstrap-3.3.7.css" rel="stylesheet">
+	<link href="./libs/font-awesome.css" rel="stylesheet">
+	<link href="./libs/editor.css" rel="stylesheet">
+	<script src="./libs/jquery-1.12.4.js"></script>
+	<script src="./libs/bootstrap-3.3.7.js"></script>
+	<script src="./libs/editor.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+	<h2>页面设置</h2>
+	<div class="col-sm-12 form-horizontal">
+		<div class="form-group">
+			<label class="control-label col-sm-2">名称：</label>
+			<div class="col-sm-10">
+				<input id="name" type="text" class="form-control" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-2">类型：</label>
+			<div class="col-sm-2">
+				<select id="pro_type" class="form-control">
+					<option value="1">模板片段</option>
+					<option value="2">可发布版</option>
+				</select>
+			</div>
+			<div class="col-sm-4">
+				<select id="hid" class="form-control">
+					<option id="ohid" value="0">通用型</option>
+				</select>
+			</div>
+			<div class="col-sm-4">
+				<select id="pid" class="form-control">
+					<option id="opid" value="0">无</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-2">样式：</label>
+			<div class="col-sm-4">
+				<select id="style_padding" class="form-control col-sm-4">
+					<option value="loose">松散布局</option>
+					<option value="moderate">适中布局</option>
+					<option value="compact">紧凑布局</option>
+				</select>
+			</div>
+			<label class="control-label col-sm-2">色调：</label>
+			<div class="col-sm-4">
+				<select id="style_color" class="form-control">
+					<option value="blue">蓝色调</option>
+					<option value="gray">灰色调</option>
+					<option value="green">绿色调</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-2 label-paddding">事件：</label>
+			<div class="col-sm-2">
+				<div class="input-group">
+					<input id="cEvent" type="checkbox" class="form-control" />
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-2">备注：</label>
+			<div class="col-sm-10">
+				<textarea id="tip" class="form-control"></textarea>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-12 text-center">
+		<button onclick="btnSave();" class="btn btn-primary">保存</button>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function () 
+{
+	bindProject();
+	bindHospital();
+	showSetting();
+});
+
+function bindProject() 
+{
+	$.post('http://api.nverhe.com/ProjectSvr/search', function (res)
+	{
+		if (res.code == 0) 
+		{
+			for (var i = 0; i < res.data.length; i++) 
+			{
+				var newNode = $("#opid").clone();
+				newNode.removeAttr("id");
+				newNode.val(res.data[i].id);
+				newNode.text(res.data[i].name);
+				$("#pid").append(newNode);
+			}
+			if (!$.isEmptyObject(window.template))
+			{
+				$('#pid').val(window.template.pid);
+			}
+		}
+	}, 'json');
+}
+
+function bindHospital() 
+{
+	$.post('http://api.nverhe.com/HospitalSvr/search', function (res)
+	{
+		if (res.code == 0) 
+		{
+			for (var i = 0; i < res.data.length; i++) 
+			{
+				var newNode = $("#ohid").clone();
+				newNode.removeAttr("id");
+				newNode.val(res.data[i].id);
+				newNode.text(res.data[i].name);
+				$("#hid").append(newNode);
+			}
+				if (!$.isEmptyObject(window.template)) 
+				{
+					$('#hid').val(window.template.hid);
+				}
+
+		}
+	}, 'json');
+}
+
+function showSetting() 
+{
+	$.post('http://api.nverhe.com/CRFSvr/model', { id: parent.template_id }, function (res)
+	{
+		if (res.code == 0) 
+		{
+			window.template = res.data;
+			$('#name').val(res.data.name);
+			$('#pro_type').val(res.data.pro_type);
+			$('#hid').val(res.data.hid);
+			$('#pid').val(res.data.pid);
+			$('#style_padding').val(res.data.style_padding);
+			$('#style_color').val(res.data.style_color);
+			$('#tip').val(res.data.tip);
+			$("#bootstrap-style").attr("href", "./libs/bootstrap-" + res.data.style_padding + "-" + res.data.style_color + ".css");
+		}
+	}, 'json');
+}
+
+function btnSave() 
+{
+	var name = $('#name').val();
+	var pro_type = $('#pro_type').val();
+	var hid = $('#hid').val();
+	var pid = $('#pid').val();
+	var style_padding = $('#style_padding').val();
+	var style_color = $('#style_color').val();
+	var event = $('#cEvent').is(':checked');
+	var tip = $('#tip').val();
+	$.post('http://api.nverhe.com/CRFSvr/insertOrUpdate', { id: parent.template_id, name: name, pro_type: pro_type, hid: hid,
+		pid: pid, style_padding: style_padding, style_color: style_color, tip: tip }, 
+	function (res) 
+	{
+		if (res.code == 0) 
+		{
+			parent.$("#bootstrap-style").attr("href", "./libs/bootstrap-" + style_padding + "-" + style_color + ".css");
+			parent.modalWin.modal("hide");
+		}
+		else 
+		{
+			alert(res.data);
+		}
+	}, 'json');
+
+}
+</script>
+</body>
+</html>

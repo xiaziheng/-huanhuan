@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>窗口样式</title>
+    <link href="./libs/bootstrap-3.3.7.css" rel="stylesheet">
+    <link href="./libs/font-awesome.css" rel="stylesheet">
+    <link href="./libs/editor.css" rel="stylesheet">
+    <script src="./libs/jquery-1.12.4.js"></script>
+    <script src="./libs/bootstrap-3.3.7.js"></script>
+</head>
+
+<body>
+<form>
+<input id="rid" name="rid" type="hidden" value="007"/>
+</form>
+<div class="container">
+    <div class="row">
+        <h2>设置样式</h2>
+        <hr>
+        <div class="tabbable">
+            <ul class="nav nav-tabs" id="navtab">
+                <li class="active"><a href="#1" data-toggle="tab">布局1</a></li>
+                <li class><a href="#2" data-toggle="tab">样色</a></li>
+                <li class><a href="#3" data-toggle="tab">扩展</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="1">
+                    <form role="form">
+                        <div class="form-group col-sm-6">
+                            <label>跨列格</label>
+                            <input id="col_span" type="text" class="form-control" name="col_span" value="">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label>前缩格</label>
+                            <input type="text" class="form-control" name="col-span">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label>上边距</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label>下边距</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label>上边线</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label>下边线</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <button id="btnSaveLayout" class="btn btn-primary" type="button">保存</button>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="tab-pane" id="2">
+                    <form role="form">
+                        <div class="form-group col-sm-6">
+                            <label>前景色</label>
+                            <input type="text" class="form-control" name="col-span">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label>背景色</label>
+                            <input type="text" class="form-control" name="col-span">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label>字体</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label>下划线</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label>标题加粗</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label>注释加粗</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </form>
+                </div>
+                <div class="tab-pane" id="3">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <input type="checkbox"> 行自增（注意边距技巧）
+                        </li>
+                        <li class="list-group-item">
+                            <input type="checkbox"> JS界面插件1
+                        </li>
+                        <li class="list-group-item">
+                            <input type="checkbox"> JS界面插件2
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var rid_value = 0;
+    $(document).ready(function ()
+    {
+        var grid = window.parent.grid;
+         rid_value = grid.attr("id");
+        $("#rid").val(rid_value);
+
+        $("#btnSaveLayout").click(function()
+        {
+            var col_span = $("#col_span").val();
+            //alert(col_span);
+//            var s_win = window.parent.document.getElementById(rid_value);
+//            var ss_win = $(s_win);
+            //grid.removeClass("col-sm-*");
+            grid.addClass("col-sm-"+col_span);
+
+            parent.modalWin.modal("hide");
+
+
+        });
+    });
+</script>
+</body>
+</html>

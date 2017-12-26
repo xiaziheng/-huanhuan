@@ -1,0 +1,418 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>添加EPM数据集</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link href="./libs/bootstrap-3.3.7.css" rel="stylesheet" />
+    <link href="./libs/font-awesome.css" rel="stylesheet" type="text/css" />
+    <link href="./libs/editor.css" rel="stylesheet" type="text/css" />
+    <script src="./libs/jquery-1.12.4.js"></script>
+    <script src="./libs/bootstrap-3.3.7.js"></script>
+    <script src="./libs/editor.js"></script>
+    <script src="./libs/bootstrap-paginator.js"></script>
+</head>
+<body>
+<form>
+    <input id="rid" name="rid" type="hidden" value="007" />
+    <input id="hMetadata_name" name="rid" type="hidden" value="" />
+    <input id="hMetadata_identify" name="rid" type="hidden" value="" />
+</form>
+<div class="container">
+    <div class="row">
+        <h3 class="col-sm-6">
+            添加数据集
+            <label>
+                <input id="Radio1" type="radio" /><small>当前绑定的数据元</small>
+            </label>
+        </h3>
+    </div>
+    <div class="row">
+        <div class="col-sm-5">
+            <div class="row">
+                <div class="form-inline">
+                    <select id="Slist" class="form-control">
+                        <option>全部</option>
+                        <option>分类一</option>
+                        <option>分类二</option>
+                        <option>分类三</option>
+                    </select>
+                    <div class="input-group">
+                        <input id="keyword" type="text" class="form-control" placeholder="关键字" />
+						<span id="btnSearch" class="input-group-addon btn btn-default" title="查询">
+							<li class="fa fa-search"></li>
+						</span>
+                    </div>
+                    <button onclick="btnSaveDataSet();" class="btn btn-primary">确定</button>
+                </div>
+            </div>
+            <div class="row">
+                <table id="EPMDataMetaInfo" class="table table-bordered table-condensed">
+                    <tbody>
+                    <tr id="trid">
+                        <td id="radioTd" class="text-center" style="min-width: 30px; width: 30px;">
+                            <input id="rid0" name="rType" type="radio" />
+                        </td>
+                        <td id="metadata_identify">
+                            <label class="col-sm-12" for="Radio2">测试数据</label>
+                        </td>
+                        <td id="metadata_name">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <ul id="pager"></ul>
+            </div>
+        </div>
+        <div class="col-sm-7 form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-sm-2">列数</label>
+                <div class="col-sm-10">
+                    <select id="sColNum" class="form-control">
+                        <option value="1">1 列</option>
+                        <option value="2">2 列</option>
+                        <option value="3">3 列</option>
+                        <option value="4">4 列</option>
+                        <option value="6">6 列</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2">方向</label>
+                <div class="col-sm-10">
+                    <label class="radio radio-inline">
+                        <input type="radio" name="cfgDirection" checked="checked" value="form-horizontal" />左右结构
+                    </label>
+                    <label class="radio radio-inline">
+                        <input type="radio" name="cfgDirection" value="上下结构" />上下结构
+                    </label>
+                    <label class="radio radio-inline">
+                        <input type="radio" name="cfgDirection" value="分数型" />分数型
+                    </label>
+                    <label class="radio radio-inline">
+                        <input type="radio" name="cfgDirection" value="左右-上下" />左上 <i class="fa fa-arrows-h"> </i> 右下(待定)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2">比例</label>
+                <div class="col-sm-10" style="padding-left: 0px;">
+                    <div class="col-sm-3">
+                        <label class="control-label">标题占格</label>
+                        <input id="title_col_span" type="text" class="form-control" value="4"/>
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="control-label">&nbsp;</label>
+                        <label class="control-label text-center col-sm-12">+</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">控件占格</label>
+                        <input id="input_col_span" type="text" class="form-control" value="8"/>
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="control-label">&nbsp;</label>
+                        <label class="control-label text-center col-sm-12">+</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">备注占格</label>
+                        <input id="tip_col_span" type="text" class="form-control" value="0"/>
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="control-label text-center">
+                            &nbsp;
+                        </label>
+                        <div class="input-group">
+                            <label class="control-label text-center">=12</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2">缩进</label>
+                <div class="col-sm-10" style="padding-left: 0px;">
+                    <div class="col-sm-3">
+                        <label class="control-label">标题缩进</label>
+                        <input id="title_indent" type="text" class="form-control" value="0"/>
+                    </div>
+                    <div class="col-sm-1">
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">控件缩进</label>
+                        <input id="input_indent" type="text" class="form-control" value="0"/>
+                    </div>
+                    <div class="col-sm-1">
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="control-label">备注缩进</label>
+                        <input id="tip_indent" type="text" class="form-control" value="0"/>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2">外间距</label>
+                <div class="col-sm-4">
+                    <input id="txtMarginVal" type="text" class="form-control" placeholder="外间距" />
+                </div>
+                <label class="control-label col-sm-2">内边距</label>
+                <div class="col-sm-4">
+                    <input id="txtPaddingVal" type="text" class="form-control" placeholder="内边距" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center">
+        <button onclick="btnSaveDataSet();" class="btn btn-primary">确定</button>
+        <input id="btnColse" type="button" value="关闭" class="btn btn-default" />
+    </div>
+
+    <div id="sampleBox">
+        <div id="c-form-h" class="form-group">
+            <label class="control-label c-title"></label>
+            <div class="c-input"></div>
+            <div class="c-tip"></div>
+        </div>
+        <div id="c-form-v" class="form-group">
+            <label class="c-title">名称</label>
+            <div class="c-input"></div>
+            <div class="c-tip"></div>
+        </div>
+        <div id="c-form-inline" class="form-group">
+            <label class="sr-only c-title">名称</label>
+            <div class="c-input"></div>
+            <div class="c-tip"></div>
+        </div>
+        <input id="c-form-text" type="text" class="form-control c-element"/>
+        <label id="c-form-checkbox">
+            <input type="checkbox" class="c-element"/>
+        </label>
+        <label id="c-form-radio" class="radio-inline">
+            <input type="radio" class="c-element"/>
+        </label>
+        <select id="c-form-select" class="form-control c-element">
+                    <option value="0">请选择</option>
+        </select>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function ()
+    {
+        $('#sampleBox').hide();
+
+        $("#trid").hide();
+        $("#keyword").focus();
+        $("#btnSearch").click(search);
+        $("#Slist").change(search);
+
+        search(1);
+    });
+
+    //绑定数据列表
+    function search(currentPage)
+    {
+        $.post("http://api.nverhe.com/EPMSvr/allSets", 
+            {keyword: $('#keyword').val(),p:currentPage},
+            function (res)
+            {   
+                if (res.code == "0") {
+                    var obj = res.data;
+                    if (obj.length == 0) {
+                        $("#EPMDataMetaInfo tbody").empty(); 
+                    }
+                //将获取到的数据动态的加载到table中
+                    for (var i = 0; i < obj.length; i++) {
+                        //获取模板行，复制一行
+                        var row = $("#trid").clone();
+                        row.show();
+                        if (i == 0) {
+                            $("#EPMDataMetaInfo tbody").empty(); //将除模板行的tr删除
+                        }
+                        row.find("#radioTd input:radio").attr("id", "rid" + i + "");
+                        row.find("#radioTd input:radio").val(obj[i].DATASET_CODE);
+                        row.find("#radioTd #rid" + i + "").click({ metadata_identify: obj[i].DATASET_CODE, metadata_name: obj[i].DATASET_NAME, index: i }, setValues);
+                        row.find("#metadata_identify").text(obj[i].DATASET_CODE);
+                        row.find("#metadata_name").text(obj[i].DATASET_NAME+"(含"+obj[i].META_ROWS+"个元)");
+                        //将新行添加到表格中
+                        row.appendTo("#EPMDataMetaInfo");
+                    }
+                    $('#pager').bootstrapPaginator(
+                            {   
+                                bootstrapMajorVersion:3,
+                                currentPage: currentPage,
+                                totalPages: Math.ceil(res.countPage/10),
+                                onPageClicked: function(e, originalEvent, type, page)
+                                {
+                                    search(page);
+                                }
+                    });
+                } else {
+               
+                }
+          
+            }, "json");
+    }
+
+    //选择单选按钮后触发的事件
+    function setValues(datas)
+    {
+        //			$("#divid").toggleClass("show");
+        $("#hMetadata_identify").val(datas.data.metadata_identify);
+        $("#hMetadata_name").val(datas.data.metadata_name);
+        //			alert($("#EPMDataMetaInfo tbody tr td #rid" + datas.data.index + "").attr("id"));
+        var selectTr = $("#EPMDataMetaInfo #rid" + datas.data.index + "").parents("tr");
+        selectTr.addClass("bg-primary");
+        selectTr.siblings().removeClass("bg-primary");
+
+    }
+
+    function creatGrid(obj, embed) {
+        var divNode;
+        if (obj.INPUT_TYPE == "text") {
+            divNode = $("#textDiv");
+            var labelNode = divNode.find(".control-label");
+            if (embed = "嵌入型") {
+                labelNode.addClass("col-sm-4");
+            } else {
+                labelNode.addClass("col-sm-" + title_col_tab2);
+            }
+        }
+        else if (obj.INPUT_TYPE == "radio") {
+            divNode = $("#radioDiv");
+        }
+        else if (obj.INPUT_TYPE == "checkbox") {
+            divNode = $("#checkboxDiv");
+        }
+        else if (obj.INPUT_TYPE == "select") {
+            divNode = $("#selectDiv");
+        }
+        return divNode;
+    }
+
+    function btnSaveDataSet()
+    {
+        //取配置参数
+        var col_num = $("#sColNum").val();
+        var cfgDirection = $('input[name="cfgDirection"]:checked').val();
+        var gridColSpan = 12 / parseInt(col_num);
+
+        var js_sid = $('input[name="rType"]:checked').val();
+        $.post("http://api.nverhe.com/EPMSvr/allElements", {sid:js_sid, pagesize:100}, function (res)
+        {
+            if (res.code > 0)
+            {
+                alert(res.data);
+                return false;
+            }
+
+            parent.getGrids().find('.c-content:first').empty();
+            var initGrid = parent.cloneGrid();
+            for (var i = 0; i < res.data.length; i++)
+            {
+                var element = res.data[i];
+                var inputType = element.DATA_META_DATATYPE;
+
+                //新建Grid
+                var newGrid = initGrid.clone();
+                newGrid.attr("id", c2id());
+                newGrid.removeClass('col-sm-*');
+                newGrid.addClass("col-sm-" + gridColSpan);
+                if(cfgDirection == 'form-horizontal')
+                {
+
+                    newGrid.find('.c-content:first').addClass("form-horizontal");
+                }
+
+                var innerNode = $('#c-form-h').clone();
+                innerNode.removeAttr('id');
+                //innerNode.addClass('col-sm-12');
+
+				//缩进
+                innerNode.find('.c-title').addClass("col-sm-offset-" + $('#title_indent').val());
+                innerNode.find('.c-input').addClass("col-sm-offset-" + $('#input_indent').val());
+                innerNode.find('.c-tip').addClass("col-sm-offset-" + $('#tip_indent').val());
+
+                innerNode.find('.c-title').addClass('col-sm-'+$('#title_col_span').val());
+                innerNode.find('.c-title').text(element.METADATA_NAME);
+                innerNode.find('.c-input').addClass('col-sm-'+$('#input_col_span').val());
+                innerNode.find('.c-tip').text(element.METADATA_INTRO);
+
+                //默认是text控件
+                var elementID = element.METADATA_IDENTIFY + '_' + parent.template_id;
+                if (inputType == "L" && element.data) {
+                        for (var j = 0; j < element.data.length; j++) {
+                            var inode = $('#c-form-radio').clone();
+                            inode.find('input').attr('id', c2id());
+                            inode.find('input').attr('name', element.METADATA_IDENTIFY + '_' + parent.template_id);
+                            inode.find('input').attr('title', element.data[j].FIELDCODE_VALUE_CN_NAME);
+                            inode.find('input').val(element.data[j].FIELDCODE_VALUE);
+                            inode.find('input').after(element.data[j].FIELDCODE_VALUE_CN_NAME);
+                            innerNode.find('.c-input').append(inode);
+                        }
+                }
+                else if (inputType == "S2" && element.data) {
+                    var inode = $('#c-form-select').clone();
+                    inode.attr('id', c2id());
+                    inode.attr('name', element.METADATA_IDENTIFY + '_' + parent.template_id);
+
+                        for (var j = 0; j < element.data.length; j++) {
+                            var newOption = inode.find('option:first').clone();
+                            newOption.val(element.data[j].FIELDCODE_VALUE);
+                            newOption.text(element.data[j].FIELDCODE_VALUE_CN_NAME);
+                            inode.append(newOption);
+                        }
+
+                    innerNode.find('.c-input').append(inode);
+                }
+                else if (inputType == "S3" || (element.data && element.data.length>0)) {
+                    if (element.data) {
+                        for (var j = 0; j < element.data.length; j++) {
+                            var inode = $('#c-form-checkbox').clone();
+                            inode.find('input').attr('id', c2id());
+                            inode.find('input').attr('name', element.METADATA_IDENTIFY + '_' + parent.template_id);
+                            inode.find('input').attr('title', element.data[j].FIELDCODE_VALUE_CN_NAME);
+                            inode.find('input').val(element.data[j].FIELDCODE_VALUE);
+                            inode.find('input').after(element.data[j].FIELDCODE_VALUE_CN_NAME);
+                            innerNode.find('.c-input').append(inode);
+                        }
+                    }
+                }
+                else
+                {
+                    var inode = $('#c-form-text').clone();
+                    inode.attr('id', c2id());
+                    inode.attr('name', element.METADATA_IDENTIFY + '_' + parent.template_id);
+                    innerNode.find('.c-input').append(inode);
+                }
+
+                var tip_col_span = parseInt($('#tip_col_span').val());
+                if(tip_col_span > 0)
+                {
+                    innerNode.find('.c-tip').addClass('col-sm-'+tip_col_span);
+                    innerNode.find('.c-tip').text(element.METADATA_INTRO);
+                }
+                else
+                {
+                    innerNode.find('.c-tip').remove();
+                }
+                newGrid.find('.c-content:first').append(innerNode);
+
+                var margin = parseInt($("#txtMarginVal").val());
+                if(margin >= 0)
+                {
+                    newGrid.css("margin-top", margin);
+                }
+                var padding = parseInt($("#txtPaddingVal").val());
+                if(padding >= 0)
+                {
+                    newGrid.css("padding", padding);
+                }
+                parent.getGrids().find('.c-content:first').append(newGrid);
+            }
+
+        }, "json");
+
+        //parent.modalWin.modal("hide");
+    }
+</script>
+</body>
+</html>

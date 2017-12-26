@@ -1,0 +1,446 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>CDE编辑器2.0</title>
+    <link href="./libs/bootstrap-3.3.0.css" rel="stylesheet">
+    <link href="./libs/font-awesome.css" rel="stylesheet">
+    <link href="./libs/editor.css" rel="stylesheet">
+    <script src="./libs/jquery-1.12.4.js"></script>
+    <script src="./libs/bootstrap-3.3.0.js"></script>
+  </head>
+
+<body>
+    <div class="container">
+        <div class="row clearfix">
+
+                <h2>基础控件库</h2>
+                <hr>
+                <div class="tabbable">
+                    <ul class="nav nav-tabs" id="navtab">
+                        <li class="active"><a href="#1" data-toggle="tab">输入框</a></li>
+                        <li class><a href="#2" data-toggle="tab">下拉框</a></li>
+                        <li class><a href="#3" data-toggle="tab">选择框</a></li>
+                        <li class><a href="#4" data-toggle="tab">按钮/附件</a></li>
+                        <li class><a id="sourcetab" href="#5" data-toggle="tab">查看代码</a></li>
+                    </ul>
+                    <form class="form-horizontal" id="components">
+                        <fieldset>
+                            <div class="tab-content">
+
+                                <div class="tab-pane active" id="1">
+
+                                    <div class="control-group component" data-type="text" rel="popover" title="输入框属性" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <label class='control-label'>输入提示语</label> <input type='text' name='placeholder' id='placeholder'>
+                          <label class='control-label'>下标提示语</label> <input type='text' name='help' id='help'>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+
+                      <!-- Text input-->
+                      <label class="control-label valtype" for="input01" data-valtype='label'>输入框</label>
+                      <div class="controls">
+                        <input type="text" placeholder="...." class="input-xlarge valtype" data-valtype="placeholder" >
+                        <p class="help-block valtype" data-valtype='help'></p>
+                      </div>
+                    </div>
+
+
+                                    <div class="control-group component" data-type="search" rel="popover" title="搜索框属性" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <label class='control-label'>输入提示语</label> <input type='text' name='placeholder' id='placeholder'>
+                          <label class='control-label'>下标提示语</label> <input type='text' name='help' id='help'>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+
+                      <!-- Search input-->
+                      <label class="control-label valtype" data-valtype="label">搜索框</label>
+                      <div class="controls">
+                        <input type="text" placeholder="...." class="input-xlarge search-query valtype" data-valtype="placeholder">
+                        <p class="help-block valtype" data-valtype="help"></p>
+                      </div>
+
+                    </div>
+
+
+                                    <div class="control-group component" data-type="prep-text" rel="popover" title="前缀输入框属性" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <label class='control-label'>前缀符</label> <input type='text' name='prepend' id='prepend'>
+                          <label class='control-label'>输入提示语</label> <input type='text' name='placeholder' id='placeholder'>
+                          <label class='control-label'>下标提示语</label> <input type='text' name='help' id='help'>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+
+                      <!-- Prepended text-->
+                      <label class="control-label valtype" data-valtype="label">前缀输入框</label>
+                      <div class="controls">
+                        <div class="input-prepend">
+                          <span class="add-on valtype" data-valtype="prepend">^_^</span>
+                          <input class="span2 valtype" placeholder="...." id="prependedInput" type="text" data-valtype="placeholder">
+                        </div>
+                        <p class="help-block valtype" data-valtype="help"></p>
+                      </div>
+
+                    </div>
+
+                                    <div class="control-group component" data-type="app-text" rel="popover" title="后缀输入框" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <label class='control-label'>后缀符</label> <input type='text' name='append' id='append'>
+                          <label class='control-label'>输入提示语</label> <input type='text' name='placeholder' id='placeholder'>
+                          <label class='control-label'>下标提示语</label> <input type='text' name='help' id='help'>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+
+                      <!-- Appended input-->
+                      <label class="control-label valtype" data-valtype="label">后缀输入框</label>
+                      <div class="controls">
+                        <div class="input-append">
+                          <input class="span2 valtype" data-valtype="placeholder" placeholder="...." type="text">
+                          <span class="add-on valtype" data-valtype="append">^_^</span>
+                        </div>
+                        <p class="help-block valtype" data-valtype="help"></p>
+                      </div>
+
+                    </div>
+
+                                    <div class="control-group component" rel="popover" title="后缀输入框属性" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <label class='control-label'>输入提示语</label> <input type='text' name='placeholder' id='placeholder'>
+                          <label class='control-label'>下标提示语</label> <input type='text' name='help' id='help'>
+                          <label class='checkbox'><input type='checkbox' class='input-inline' name='checked' id='checkbox'>默认选中</label>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+
+                      <!-- Prepended checkbox -->
+                      <label class="control-label valtype" data-valtype="label">前缀复选输入框</label>
+                      <div class="controls">
+                        <div class="input-prepend">
+                          <span class="add-on">
+                            <label class="checkbox">
+                              <input type="checkbox" class="valtype" data-valtype="checkbox">
+                            </label>
+                          </span>
+                          <input class="span2 valtype" placeholder="...." type="text" data-valtype="placeholder">
+                        </div>
+                        <p class="help-block valtype" data-valtype="help"></p>
+                      </div>
+
+                    </div>
+
+                                    <div class="control-group component" rel="popover" title="前缀输入框属性" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <label class='control-label'>输入提示语</label> <input type='text' name='placeholder' id='placeholder'>
+                          <label class='control-label'>下标提示语</label> <input type='text' name='help' id='help'>
+                          <label class='checkbox'><input type='checkbox' class='input-inline' name='checked' id='checkbox'>默认选中</label>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+
+                      <!-- Appended checkbox -->
+                      <label class="control-label valtype" data-valtype="label">后缀复选输入框</label>
+                      <div class="controls">
+                        <div class="input-append">
+                          <input class="span2 valtype" placeholder="...." type="text" data-valtype="placeholder">
+                          <span class="add-on">
+                            <label class="checkbox" for="appendedCheckbox">
+                              <input type="checkbox" class="valtype" data-valtype="checkbox">
+                            </label>
+                          </span>
+                        </div>
+                        <p class="help-block valtype" data-valtype="help"></p>
+                      </div>
+                    </div>
+
+                                    <div class="control-group component" rel="popover" title="文本域属性" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+
+                      <!-- Textarea -->
+                      <label class="control-label valtype" data-valtype="label">文本域</label>
+                      <div class="controls">
+                        <div class="textarea">
+                              <textarea type="" class="valtype" data-valtype="checkbox" /> </textarea>
+                        </div>
+                      </div>
+                    </div>
+
+                                </div>
+
+                                <div class="tab-pane" id="2">
+
+                                    <div class="control-group component" rel="popover" title="单选下拉框属性" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <label class='control-label'>选项: </label>
+                          <textarea style='min-height: 200px' id='option'> </textarea>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+
+                      <!-- Select Basic -->
+                      <label class="control-label valtype" data-valtype="label">单选下拉框</label>
+                      <div class="controls">
+                        <select class="input-xlarge valtype" data-valtype="option">
+                          <option>第一项</option>
+                          <option>第二项</option>
+                          <option>第三项</option>
+                          <option>第四项</option>
+                        </select>
+                      </div>
+
+                    </div>
+
+                                    <div class="control-group component" rel="popover" title="单选框属性" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <label class='control-label'>选项: </label>
+                          <textarea style='min-height: 200px' id='option'></textarea>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+
+                      <!-- Select Multiple -->
+                      <label class="control-label valtype" data-valtype="label">多选下拉框</label>
+                      <div class="controls">
+                        <select class="input-xlarge valtype" multiple="multiple" data-valtype="option">
+                            <option>第一项</option>
+                            <option>第二项</option>
+                            <option>第三项</option>
+                            <option>第四项</option>
+                        </select>
+                      </div>
+                    </div>
+
+                                </div>
+
+                                <div class="tab-pane" id="3">
+
+                                    <div class="control-group component" rel="popover" title="复选框属性" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <label class='control-label'>选项: </label>
+                          <textarea style='min-height: 200px' id='checkboxes'> </textarea>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+                      <label class="control-label valtype" data-valtype="label">复选框</label>
+                      <div class="controls valtype" data-valtype="checkboxes">
+
+                        <!-- Multiple Checkboxes -->
+                        <label class="checkbox">
+                          <input type="checkbox" value="1">
+                          第一项
+                        </label>
+                        <label class="checkbox">
+                          <input type="checkbox" value="2">
+                          第二项
+                        </label>
+                      </div>
+
+                    </div>
+
+                                    <div class="control-group component" rel="popover" title="多选框属性" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <label class='control-label'>分组的名字</label> <input class='input-large' type='text' name='name' id='name'>
+                          <label class='control-label'>选项: </label>
+                          <textarea style='min-height: 200px' id='radios'></textarea>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+                      <label class="control-label valtype" data-valtype="label">单选框</label>
+                      <div class="controls valtype" data-valtype="radios">
+
+                        <!-- Multiple Radios -->
+                        <label class="radio">
+                          <input type="radio" value="1" name="group" checked="checked">
+                          第一项
+                        </label>
+                        <label class="radio">
+                          <input type="radio" value="2" name="group">
+                          第二项
+                        </label>
+                      </div>
+
+                    </div>
+
+                                    <div class="control-group component" rel="popover" title="复选框（同行）属性" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <label class='control-label'>选项: </label>
+                          <textarea style='min-height: 200px' id='inline-checkboxes'></textarea>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+                      <label class="control-label valtype" data-valtype="label">复选框（同行）</label>
+
+                      <!-- Multiple Checkboxes -->
+                      <div class="controls valtype" data-valtype="inline-checkboxes">
+                        <label class="checkbox inline">
+                          <input type="checkbox" value="1"> 1
+                        </label>
+                        <label class="checkbox inline">
+                          <input type="checkbox" value="2"> 2
+                        </label>
+                        <label class="checkbox inline">
+                          <input type="checkbox" value="3"> 3
+                        </label>
+                      </div>
+
+                    </div>
+
+                                    <div class="control-group component" rel="popover" title="单选框（同行）属性" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <label class='control-label'>分组的名字</label> <input class='input-large' type='text' name='name' id='name'>
+                          <label class='control-label'>选项: </label>
+                          <textarea style='min-height: 200px' id='inline-radios'></textarea>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+                      <label class="control-label valtype" data-valtype="label">单选框（同行）</label>
+                      <div class="controls valtype" data-valtype="inline-radios">
+
+                        <!-- Inline Radios -->
+                        <label class="radio inline">
+                          <input type="radio" value="1" checked="checked" name="group">
+                          1
+                        </label>
+                        <label class="radio inline">
+                          <input type="radio" value="2" name="group">
+                          2
+                        </label>
+                        <label class="radio inline">
+                          <input type="radio" value="3">
+                          3
+                        </label>
+                      </div>
+                    </div>
+
+                                </div>
+
+                                <div class="tab-pane" id="4">
+                                    <div class="control-group component" rel="popover" title="附件按钮" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+                      <label class="control-label valtype" data-valtype="label">选择文件</label>
+
+                      <!-- File Upload -->
+                      <div class="controls">
+                        <input class="input-file" id="fileInput" type="file">
+                      </div>
+                    </div>
+
+                                    <div class="control-group component" rel="popover" title="Search Input" trigger="manual"
+                                         data-content="
+                      <form class='form'>
+                        <div class='controls'>
+                          <label class='control-label'>标题</label> <input class='input-large' type='text' name='label' id='label'>
+                          <label class='control-label'>按钮上的文字</label> <input class='input-large' type='text' name='label' id='button'>
+                          <label class='control-label' id=''>按钮样式（Bootsrap）: </label>
+                          <select class='input' id='color'>
+                            <option id='btn-default'>Default</option>
+                            <option id='btn-primary'>Primary</option>
+                            <option id='btn-info'>Info</option>
+                            <option id='btn-success'>Success</option>
+                            <option id='btn-warning'>Warning</option>
+                            <option id='btn-danger'>Danger</option>
+                            <option id='btn-inverse'>Inverse</option>
+                          </select>
+                          <hr/>
+                          <button class='btn btn-info'>确定</button><button class='btn btn-danger'>取消</button>
+                        </div>
+                      </form>"
+                      >
+                      <label class="control-label valtype" data-valtype="label">按钮</label>
+
+                      <!-- Button -->
+                      <div class="controls valtype"  data-valtype="button">
+                        <button class='btn btn-success'>按钮</button>
+                      </div>
+                    </div>
+                                </div>
+                                <div class="tab-pane" id="5">
+                                    <textarea id="source" class="span6"></textarea>
+                                </div>
+                                </div>
+                        </fieldset>
+                    </form>
+            </div> <!-- row -->
+        </div> <!-- /container -->
+    </div>
+</body>
+</html>

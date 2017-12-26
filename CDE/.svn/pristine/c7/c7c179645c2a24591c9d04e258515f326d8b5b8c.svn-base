@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>CDE编辑器2.0</title>
+    <link id="bootstrap-style" href="./libs/bootstrap-3.3.7.css" rel="stylesheet">
+    <link href="./libs/font-awesome.css" rel="stylesheet">
+    <link href="./libs/editor.css" rel="stylesheet">
+    <script src="./libs/jquery-1.12.4.js"></script>
+    <script src="./libs/editor.js"></script>
+</head>
+<body>
+<script type="text/javascript" id="jsLoad">
+$(document).ready(function ()
+{
+	var template_id = zq_get_url_param('id');
+	zq_showViewStyle();
+	if (template_id == null || template_id == 0) 
+	{
+		alert('system error');
+		return false;
+	}
+	$.post('http://api.nverhe.com/CRFSvr/htmlStr', { id: template_id },
+        function (res)
+		{
+			if (res.code == 0) 
+			{
+				if (res.data.trim() == '')
+				{
+            		return false;
+            	}
+            	var editorBody = $(res.data);
+            	editorBody.find('.c-toolbar').remove();
+            	editorBody.find('.c-input').empty();
+            	editorBody.find('.c-content').removeClass('c-indent');
+            	editorBody.find('.s-win').removeClass('s-win');
+            	editorBody.removeClass('s-win');
+            	editorBody.find('.dropdown').remove();
+            	$('body').append(editorBody);
+            	$('#jsLoad').remove();
+            }
+    }, 'json');
+});
+</script>
+</body>
+</html>

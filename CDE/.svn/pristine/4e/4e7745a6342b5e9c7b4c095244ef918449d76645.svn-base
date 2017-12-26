@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>设置数据元</title>
+    <link href="./libs/bootstrap-3.3.7.css" rel="stylesheet">
+    <link href="./libs/font-awesome.css" rel="stylesheet">
+    <link href="./libs/editor.css" rel="stylesheet">
+    <script src="./libs/jquery-1.12.4.js"></script>
+    <script src="./libs/bootstrap-3.3.7.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <div class="row">
+        <h2>设置数据元/组/集</h2>
+        <hr>
+        <div class="tabbable">
+            <ul class="nav nav-tabs" id="navtab">
+                <li class="active"><a href="#1" data-toggle="tab">数据元</a></li>
+                <li class><a href="#2" data-toggle="tab">数据组</a></li>
+                <li class><a href="#3" data-toggle="tab">数据集</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="1">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <div class="input-group">
+                                    <input id="search" type="text" class="form-control" value="眼睛" placeholder="数据元名/组..." />
+                                    <span class="input-group-btn">
+                                       <button  id="btnSearch" class="btn btn-info btn-search" type="button">查找</button>
+                                       <button class="btn btn-info btn-search" style="margin-left:1px">添加</button>
+                                        <button  id="btnSave" class="btn btn-info btn-search" type="button">保存</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="list-group">
+                            <li class="list-group-item metadata-item">
+                                <input type="radio" value="0">
+                                <span>无</span>
+                            </li>
+                        </ul>
+                        <ul class="pagination">
+                            <li><a href="#">上一页</a></li>
+                            <li><a href="#">1</a></li>
+                            <li><a href="#">2</a></li>
+                            <li><a href="#">3</a></li>
+                            <li><a href="#">4</a></li>
+                            <li><a href="#">5</a></li>
+                            <li><a href="#">下一页</a></li>
+                        </ul>
+                    </form>
+
+                </div>
+
+                <div class="tab-pane" id="2">
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function ()
+    {
+        $("#btnSearch").click(function()
+        {
+            $.post("api_metadata.php",
+                    {cmd:"GetDataMeta", name:$("#search").val()}, function(res, status)
+            {
+                var node = $('.metadata-item').first();
+                node.siblings().remove();
+                //console.log(res.rows);
+                $.each(res.data, function (n, v)
+                {
+                    var newNode = node.clone();//构造新节点
+                    newNode.children('span').text(v.name);//赋值
+                    newNode.children(':radio').val(v.id);
+                    node.after(newNode);//显示
+                });
+            }, 'json');
+        });
+    });
+</script>
+</body>
+</html>

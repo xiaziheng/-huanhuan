@@ -1,0 +1,349 @@
+
+function zq_bindFormula(event, fid)
+{
+    $.post('http://api.nverhe.com/FormulaSvr/model', {id: fid}, function (res)
+    {
+        if(res.code == 0)
+        {
+            var rs = doFormula(res.data);
+            $(event).val(rs);
+        }
+
+    }, 'json');
+}
+
+function directGlobalHide(gridID, elementID, toValue)
+{
+    $.post('http://api.nverhe.com/GlobalSvr/fetch', {elementID: elementID}, function (res)
+    {
+    	if (res.code == 0)
+		{
+    	
+    		var fromValue = res.data;
+    		//alert(fromValue+':'+toValue+' -> '+elementID);
+			var isShow_Hide = true;
+    		if ($.isArray(fromValue))
+			{
+				for (var i = 0; i < fromValue.length; i++)
+				{
+					if ($.inArray(fromValue[i], toValue) >= 0)
+					{
+						$('#' + gridID).hide();
+						isShow_Hide = false;
+						break;
+					}
+				}
+				if (isShow_Hide)
+				{
+					$('#' + gridID).show();
+				}
+			}
+			else
+			{
+    			//toValue为数组，所有需要用inArray判断是否存在与数组
+				if ($.inArray(parseInt(fromValue), toValue) >= 0)
+				{
+    				$('#' + gridID).hide();
+    			}
+    			else
+				{
+    				$('#' + gridID).show();
+    			}
+    		}
+    	}
+    }, 'json').error(function(res){console.log(res.responseText)});
+}
+
+/**
+ * 多:多:多 = 多个输入值: 多个比较值: 多个控件
+ * @param event 事件发生的控件，可以根据其name查找到所有其他同name选中的数据
+ * @param showArrayStr 被控制的控件及其所依赖的数组
+ */
+function directFormShow(event, showArrayStr)
+{
+    //选中的值
+    var fromValues = [];
+    var tempName = $(event).attr('name');
+    $("[name='"+tempName+"']").each(function(index, row){
+        if($(row).is(':checked') || $(row).is('select'))
+        {
+            fromValues.push($(row).val());
+        }
+    });
+
+    //循环处理多个被控制的Slave控件
+    var showArray = eval(showArrayStr);
+    for(var i=0; i<showArray.length; i++)
+    {
+        var toValues = showArray[i][0];
+        var toGridID = showArray[i][1];
+        var tempPos = zy_ArrayinArray(fromValues, toValues);
+        if(tempPos)
+        {
+			//TODO 张强 级联.c-element disabled
+			//TODO 张强 默认样式有显示和隐藏两种 先做上一个 再思考这一个
+			//TODO 张强 被空格跟着走的时候的控制变量  用appendTo();
+			// TODO 张强 0默认 1跟下面 2跟后面  检查.c-element .c-input
+            $('#'+toGridID).show();
+        }
+        else
+        {
+            $('#'+toGridID).hide();
+        }
+    }
+}
+
+function zy_ArrayinArray(inValues, valuesArray) {
+    for(var j=0; j<inValues.length; j++)
+    {
+        var inValue = inValues[j];
+        for (var i = 0; i < valuesArray.length; i++)
+        {
+            if(inValue == valuesArray[i]) return true;
+        }
+    }
+    return false;
+}
+
+function zq_formulaHide(fid, cmp, toValue, toGridID)
+{
+    //alert(fid+cmp+toValue+':'+toGridID);
+    $.post('http://api.nverhe.com/FormulaSvr/model', {id: fid}, function (res)
+    {
+        if(res.code == 0)
+        {
+        	var rs = doFormula(res.data);
+        	cmp = eval(cmp);
+        	toValue = eval(toValue);
+        	toGridID = eval(toGridID);
+        	//alert(rs+':'+cmp+':'+toValue+' > '+toGridID);
+        	for (var i = 0; i < cmp.length; i++)
+			{
+				
+				if ((cmp[i] == '=' && rs == toValue[i]) || (cmp[i] == '>' && rs > toValue[i]) || (cmp[i] == '<' && rs < toValue[i]))
+				{
+					//TODO 张强 级联.c-element disabled
+					$('#' + toGridID[i]).hide();
+				}
+				else
+				{
+					$('#' + toGridID[i]).show();
+				}
+				//级联隐藏
+				//$('#' + toGridID[i]).find('.c-element').change();
+        	}
+        }
+
+    }, 'json');
+}
+
+function doFormula(data)
+{
+    var exp = data.exp;
+    var exp_var = '';
+    $(data.symbols).each(function (index, row) {
+    	var v = 0;
+    	var elementName = row.eid;
+    	if ($.isEmptyObject(elementName)) {
+    		v = row.value;
+    	}
+    	else {
+    		var element = $("input[name='" + elementName + "']:checked");
+    		if (element.length == 0) {
+    			element = $("input[name='" + elementName + "']");
+    			v = element.val();
+    		}
+    		if (element.length == 0) {
+    			element = $("select[name='" + elementName + "']");
+    			v = element.val();
+    		}
+    		if (element.length == 0) {
+//    			if (typeof (Worker) !== "undefined") {
+//    			} else {
+    				//设置了同步加载 async: false $post();貌似设置不了这个属性
+				//TODO 张强 催传奇的API
+    				$.ajax({
+    					url: "http://api.nverhe.com/GlobalSvr/fetch",
+    					dataType: 'json',
+    					async: false,
+    					type: "post",
+    					data: { elementID: elementName },
+    					success: function (res) {
+    						if (res.code == 0) {
+    							v = res.data;
+    						}
+    					}
+    				});
+//    			}
+    		}
+    	}
+    	exp_var += row.name + '=' + v + ';';
+    });
+    var rs = eval(exp_var + exp);
+    return rs;
+}
+
+function openModalWin(event, url) {
+    //window.grids = $('.c-grid-checkbox:checked').parent().parent();
+    //window.grid = grids.first();
+    window.modalWin = $('#modalWin');
+    $("#iWin").attr("src", url);
+    modalWin.modal({ show: true });
+}
+
+function c2id() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+function getTemplateID()
+{
+    if(window.template_id == undefined)
+    {
+        window.template_id = parent.template_id;
+        if(window.template_id == undefined)
+        {
+            window.template_id = parent.parent.template_id;
+        }
+    }
+    return window.template_id;
+}
+
+function selfDeleteGrid(event) {
+	$(event).parents('.c-grid:first').remove();
+}
+
+function selfCopyGrid(event) {
+    var grid = $(event).parents('.c-grid:first');
+    var newGrid = grid.clone();
+    newGrid.attr('id', c2id());
+    grid.after(newGrid);
+}
+
+// function jingyu_int(event,min,max) {
+// 	$(event).val($(event).val().replace(/[^0-9]/g,''));
+// 	if($(event).val()<min || $(event).val()>max){
+// 		$(event).val('')
+// 	}
+// }
+
+// function jingyu_float(event,min,max,eff) {
+//    if(eff>=1){
+//         var re = new RegExp("^(\\-)*(\\d+)\\.(\\d{"+eff+"}).*$");
+//         $(obj).val($(obj).val().replace(re,'$1$2.$3'));  
+//     }
+//     $(obj).val($(obj).val().replace(/^\./g,"")); 
+//     $(obj).val($(obj).val().replace(/[^\d.]/g,"")); 
+//     $(obj).val($(obj).val().replace(/\.{2,}/g,"."));  
+//     $(obj).val($(obj).val().replace(".","$#$").replace(/\./g,"").replace("$#$","."));
+//     if($(obj).val()<min || $(obj).val()>max){
+//         $(obj).val('')
+//     }  
+// }
+
+// function jingyu_num(event) {
+// 	    $(event).val($(event).val().replace(/[^0-9.]/g,''));
+// }
+
+function jingyu_cloneNode(event) {
+    var tempGrid = $(event).parents('.c-grid:first');
+    var newGrid = tempGrid.clone();
+
+	//TODO 靖宇 增加tabname、rownum，增加sorter()顺序函数，只保留最后一行的+-号
+    //创建新的元的ID
+    $.post('http://api.nverhe.com/CRFSvr/nextSorter', {id: window.template_id}, function (res) {
+        if (res.code == 0) {
+            var elements = newGrid.find('.c-element');
+            var formElementName = elements.attr('name');
+			//TODO 下划线会不断级联
+            formElementName += '_' + res.data;
+            elements.attr('name', formElementName);
+            tempGrid.after(newGrid);
+        } else alert('API Error');
+    }, 'json');
+}
+
+function jingyu_deleNode(event) {
+    $(event).parents('.c-grid:first').remove();
+}
+
+function zq_getCookie(name) 
+{
+	var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+	if (arr = document.cookie.match(reg)) 
+	{
+		return unescape(arr[2]);
+	}
+	else 
+	{
+		return null;
+	}
+}
+
+function zq_setCookie(name, value) 
+{
+	var Days = 30;
+	var exp = new Date();
+	exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+	document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
+}
+
+function zq_delCookie(name) 
+{
+	var exp = new Date();
+	exp.setTime(exp.getTime() - 1);
+	var cval = zq_getCookie(name);
+	if (cval != null) 
+	{
+		document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
+	}
+}
+
+function zq_removeClass(grid)
+{
+	for (var i = 1; i <= 12; i++)
+	{
+		grid.removeClass("col-xs-" + i);
+		grid.removeClass("col-sm-" + i);
+		grid.removeClass("col-md-" + i);
+		grid.removeClass("col-lg-" + i);
+	}
+}
+
+function zq_get_url_param(name) 
+{
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+	var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+	if (r != null) return unescape(r[2]); return null; //返回参数值
+}
+
+function zq_showViewStyle() {
+	$.post('http://api.nverhe.com/CRFSvr/model', { id: zq_get_url_param('id') }, function (res) {
+		if (res.code == 0) {
+            if(res.data.style_padding == '' || res.data.style_color=='')
+            {
+                return false;
+            }
+			$("#bootstrap-style").attr("href", "./libs/bootstrap-" + res.data.style_padding + "-" + res.data.style_color + ".css");
+		}
+	}, 'json');
+}
+
+function zq_rangeShowValue(event)
+{
+	$('.c-range-value').text($(event).val());
+}
+
+
+function zq_eraser()
+{
+	var element = $(this).parents('.c-grid:first').find('.c-element');
+	element.attr('checked', false);
+	if (element.is(":radio"))
+	{
+		var select_element = $('input:radio[name="' + element.attr("name") + '"]:checked');
+//		select_element.change();
+	}
+}

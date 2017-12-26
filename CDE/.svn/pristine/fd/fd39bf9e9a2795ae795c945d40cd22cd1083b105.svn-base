@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>多行多列</title>
+    <link href="./libs/bootstrap-3.3.7.css" rel="stylesheet">
+    <link href="./libs/font-awesome.css" rel="stylesheet">
+    <link href="./libs/editor.css" rel="stylesheet">
+    <script src="./libs/jquery-1.12.4.js"></script>
+    <script src="./libs/bootstrap-3.3.7.js"></script>
+    <script src="./libs/editor.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="form-horizontal" role="form">
+        <h3>多行多列设置</h3>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="input-group" style="width: 100px;">
+                    <input id="row_num" type="text" class="form-control" style="text-align: center" value="1" />
+                    <span class="input-group-addon">行</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class=" input-group" style="width: 100px;">
+                    <select id="col_num" class="form-control" title="" style="text-align: center">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="6">6</option>
+                        <option value="6">12</option>
+                    </select>
+                    <span class="input-group-addon">列</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label><input id="nestedCHK" type="checkbox" checked="true"/>嵌入式</label>
+                <label><input id="nowrapCHK" type="checkbox"/>不换行表格</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-sm-3">
+                <div class="input-group" style="width: 100px;">
+                    <input  type="button" value="确定" class="btn btn-primary" onclick="addMultiGrid(this)" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+$(document).ready(function ()
+{
+
+});
+
+function addMultiGrid(event)
+{
+        //读取行列数
+        var rowNum = $("#row_num").val();
+        var colNum = $("#col_num").val();
+
+        //算行列
+        var col_span = parseInt(12/colNum);
+
+        //双重循环  构造格
+        for(var i=0; i<rowNum; i++)
+        {   
+            var row_grid = parent.cloneGrid();
+            var rowGrid = row_grid.find('.c-content')
+            var nested = $('#nestedCHK').is(':checked');
+            var nowrap = $('#nowrapCHK').is(':checked');
+//            var initNode = parent.cloneGrid();
+            for(var j=0; j<colNum; j++)
+            {   
+                var newNode = parent.cloneGrid();
+//                newNode.find('.c-content:first').empty();
+                zq_removeClass(newNode);
+                if(nowrap)
+                {
+                    newNode.addClass("col-xs-"+col_span);
+                }
+                else
+                {
+                    newNode.addClass("col-sm-"+col_span);
+                }
+
+                if(nested)
+                {   
+                    rowGrid.append(newNode);
+                    parent.currentAppend(row_grid);
+                }
+                else
+                {   
+                    rowGrid.append(newNode);
+                    parent.currentAfter(row_grid);
+                }
+            }
+        }
+
+        parent.modalWin.modal("hide");
+}
+</script>
+</body>
